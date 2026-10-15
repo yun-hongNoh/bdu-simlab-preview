@@ -1,0 +1,566 @@
+<!doctype html>
+<html lang="ko">
+<head><meta name="robots" content="noindex,nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="빅데이터 기획 및 분석 7주 2강: 의심스러운 학습시간 기록을 확인하고 이상값을 판별하는 게임형 실습">
+<title>데이터 정제 공장 | 7주 2강 · SIM LAB</title>
+<style>
+:root{color-scheme:light;--ink:#13304a;--muted:#60788c;--edge:#dce8ee;--sea:#087f85;--sea-deep:#00666f;--light:#eef8f7;--focus:#1268c5}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 8% -10%,#d7f8f1 0,transparent 35%),#f5f8fa;color:var(--ink);font:16px/1.6 "Pretendard","Noto Sans CJK KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif}
+[hidden]{display:none!important}button,input,textarea{font:inherit}button{cursor:pointer}button:disabled{cursor:wait;opacity:.68}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid var(--focus);outline-offset:3px}a{color:inherit}
+.skip{position:absolute;top:-60px;left:12px;background:#fff;padding:10px;z-index:20}.skip:focus{top:12px}.topbar{max-width:1060px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:15px;padding:20px 25px 8px;font-size:.83rem}.topbar a{text-decoration:none;color:#526d80}.topbar a:hover{text-decoration:underline}.mark{font-weight:800;color:#197b86;letter-spacing:.05em}.shell{max-width:1000px;margin:auto;padding:12px 24px 65px}
+.headline{text-align:center;max-width:750px;margin:6px auto 24px}.eyebrow{font-size:.76rem;letter-spacing:.09em;font-weight:900;color:#087e87}.headline h1{font-size:clamp(1.8rem,4vw,2.9rem);line-height:1.17;letter-spacing:-.065em;margin:8px 0}.headline p{font-size:clamp(.92rem,1.8vw,1.03rem);color:#516b7a;margin:0}
+.card{background:white;border:1px solid var(--edge);border-radius:25px;box-shadow:0 16px 50px #35516e0d;overflow:hidden}.statusline{display:flex;justify-content:space-between;align-items:center;padding:13px 20px;gap:15px;font-size:.83rem;font-weight:800}.statusline .count{color:#497187;font-variant-numeric:tabular-nums}.track{height:6px;background:#e8f0f1}.track>div{height:100%;width:0;background:linear-gradient(90deg,#40b8be,#79d1a6);transition:width .25s}
+.scene{position:relative;isolation:isolate;height:360px;background:radial-gradient(ellipse at 40% 13%,#214c64 0,transparent 57%),linear-gradient(160deg,#0d2538,#163548);overflow:hidden;color:white}.scene:after{content:"";position:absolute;z-index:0;left:0;right:0;bottom:0;height:64px;background:repeating-linear-gradient(115deg,transparent 0 36px,#173e4d 36px 38px);opacity:.6;pointer-events:none}.scene:before{content:"";position:absolute;inset:0;background-image:radial-gradient(#c6f3f220 1px,transparent 1px);background-size:24px 24px;opacity:.35;pointer-events:none}
+.scene-top{position:absolute;top:15px;left:20px;right:20px;display:flex;align-items:center;justify-content:space-between;gap:10px;z-index:1;color:#bbdce5;font-size:.75rem}.lamp{display:inline-flex;align-items:center;gap:7px}.lamp:before{content:"";height:8px;width:8px;border-radius:100%;background:#76ead9;box-shadow:0 0 10px #76ead9aa}.scene[data-phase="decision"] .lamp:before{background:#ffd084;box-shadow:0 0 15px #ffd084aa}.scene[data-phase="done"] .lamp:before{background:#a2ecb6}
+.platform{position:absolute;z-index:1;left:5%;right:10%;top:50%;height:58px;transform:translateY(-5%);background:linear-gradient(#3b6476 0 17%,#142e42 17% 80%,#0c2230 80%);border:2px solid #6b99a4;border-radius:8px;box-shadow:0 15px 28px #061b2b90}.platform:before{content:"";position:absolute;inset:10px 5px 7px;height:7px;background:repeating-linear-gradient(90deg,#9acdcf 0 14px,transparent 14px 29px);animation:conveyor 1.4s linear infinite}@keyframes conveyor{to{background-position:58px 0}}.platform:after{content:"";position:absolute;left:0;right:0;bottom:-17px;height:14px;background:repeating-linear-gradient(90deg,#3b6370 0 12px,#113044 12px 29px);border-radius:0 0 7px 7px}
+.machine{position:absolute;left:45%;top:37%;width:110px;height:130px;transform:translateX(-50%);border-radius:16px 16px 8px 8px;background:linear-gradient(135deg,#426e81,#204456);border:3px solid #8bbbc3;z-index:4;box-shadow:0 8px 19px #07182799,inset 0 0 22px #99d1cf10}.machine:before{content:"";position:absolute;top:-21px;left:32px;width:40px;height:21px;background:#9ac9c9;border-radius:8px 8px 0 0}.machine .screener{position:absolute;left:17px;top:26px;width:70px;height:64px;background:#072637;border:2px solid #80c9c7;border-radius:8px;display:grid;place-items:center}.scanner-ring{width:38px;height:38px;border:3px dashed #91ebd7;border-radius:50%;animation:spin 3.8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}.beam{position:absolute;top:91px;left:50px;height:60px;width:6px;background:#71e3d8;box-shadow:0 0 18px 5px #77ede874;opacity:.6;animation:blink 1.7s ease-in-out infinite}@keyframes blink{50%{opacity:.15}}.scene[data-phase="decision"] .machine{border-color:#ffd386}.scene[data-phase="decision"] .beam{background:#ffd386;box-shadow:0 0 26px #ffcc7d;opacity:1;animation:blink .7s ease-in-out infinite}
+.machine-label{position:absolute;z-index:5;top:24%;left:45%;transform:translateX(-50%);font-weight:900;font-size:.84rem;color:#e0f7f3;white-space:nowrap}
+.entry-label{position:absolute;top:39%;left:5%;font-size:.78rem;color:#b6dae5}.bins{position:absolute;top:25%;right:2%;width:110px;display:grid;gap:8px;z-index:2}.bin{font-size:.75rem;font-weight:850;text-align:center;border-radius:8px;min-height:54px;display:grid;place-items:center;border:1px solid #54868c;background:#174554;color:#dffaf0}.bin.keep{border-color:#63b49c}.bin.fix{border-color:#62b2d4}.bin.drop{border-color:#bb856b}.bin strong{font-variant-numeric:tabular-nums;font-size:1rem;display:block;line-height:1.15}.lineout{position:absolute;right:10%;height:3px;width:11%;background:#75a6b1;z-index:1}.lineout.keep{top:33%}.lineout.fix{top:52%}.lineout.drop{top:71%}
+.parcel{position:absolute;z-index:7;left:0;top:0;width:88px;height:69px;border:3px solid #d6fcfa;border-radius:12px;background:linear-gradient(143deg,#b9f3ed,#5dcac5);box-shadow:0 8px 18px #051f3288,inset 0 -7px 0 #1a85943a;display:flex;align-items:center;justify-content:center;flex-direction:column;color:#0d3443;pointer-events:none}.parcel strong{font-size:1.28rem;line-height:1.18;font-variant-numeric:tabular-nums}.parcel small{font-size:.68rem;font-weight:800}.parcel.warn{background:linear-gradient(143deg,#ffeab4,#e6ae58);border-color:#fff6d6}.parcel.fix{background:linear-gradient(143deg,#cef3ff,#72bee3);border-color:#def7ff}.parcel.drop{background:linear-gradient(143deg,#ffdbcf,#ed9c80);border-color:#fff2e9}.parcel[hidden]{display:none}
+.scene-note{position:absolute;z-index:2;bottom:15px;left:20px;right:20px;color:#accdd6;font-size:.74rem;line-height:1.4}
+.action{padding:20px 24px 24px;text-align:center;min-height:166px}.action h2{font-size:1.15rem;letter-spacing:-.03em;margin:0 0 4px}.action p{font-size:.91rem;color:#526c7e;max-width:590px;margin:0 auto 15px}.btnrow{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}.btn{min-height:48px;padding:11px 23px;border-radius:13px;border:1px solid #b8cbd4;background:white;color:#17435b;font-size:.93rem;font-weight:850;transition:transform .15s,box-shadow .15s}.btn:hover{transform:translateY(-1px);box-shadow:0 5px 13px #1c567015}.btn.primary{background:#067b81;border-color:#067b81;color:white;box-shadow:0 4px 12px #08777e22}.btn.primary:hover{background:#005f68}.btn.danger{background:#fff;border-color:#f0c1ae;color:#a34b2c}.btn:active{transform:translateY(1px)}.btn.tiny{padding:6px 12px;min-height:35px;font-size:.77rem}.btn[hidden],.action[hidden],.result[hidden],.feedback[hidden],.advanced[hidden]{display:none}
+.decision-value{color:#99591e;font-weight:900;font-size:1.32rem;font-variant-numeric:tabular-nums}.feedback{border-top:1px solid #e5eef2;padding:12px 25px 15px;background:#f5fbf9;color:#2a626c;font-size:.88rem}.feedback strong{display:block;font-size:.92rem;color:#19565f;margin-bottom:2px}.feedback p{margin:0}
+.result{margin-top:20px;padding:24px}.result h2{font-size:1.28rem;margin:0 0 4px}.result-lead{color:#597484;font-size:.91rem;margin:0 0 17px}.result-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.metric{border-radius:14px;padding:14px;background:#f0f8f7;text-align:center}.metric strong{display:block;color:#076b70;font-size:1.65rem;line-height:1.25;font-variant-numeric:tabular-nums}.metric span{font-size:.78rem;color:#507181}.metric.loss{background:#fff4ed}.metric.loss strong{color:#bf6336}.compare{background:#f5f8fb;border:1px solid #e1eaf0;padding:15px;border-radius:13px;margin-top:15px;font-size:.86rem}.compare strong{color:#1c5269}.compare .meanline{display:flex;justify-content:space-between;gap:16px;font-variant-numeric:tabular-nums;margin:5px 0}.concept{border-left:4px solid #20a7a7;padding:10px 15px;background:#edf8f6;border-radius:0 10px 10px 0;font-size:.88rem;margin-top:15px}.concept strong{display:block}.result-actions{display:flex;gap:10px;justify-content:center;margin-top:20px;flex-wrap:wrap}
+.advanced-details{margin-top:20px;border-radius:14px;border:1px solid #d9e7eb;background:#fff;overflow:hidden}.advanced-details summary{padding:15px 18px;font-weight:800;cursor:pointer;color:#35596b;font-size:.9rem}.advanced-body{border-top:1px solid #e4ebef;padding:18px}.advanced-body p{margin:0 0 13px;color:#536f81;font-size:.85rem}.advanced-body label{display:flex;justify-content:space-between;font-weight:800;font-size:.9rem;align-items:center;gap:10px}.advanced-body input{width:100%;accent-color:var(--sea);margin:12px 0}.advanced-body .small{font-size:.78rem;color:#657e8d}.advanced-body .actionrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.ledger{margin-top:13px;max-height:190px;overflow:auto;font-size:.78rem}.ledger table{width:100%;border-collapse:collapse}.ledger td,.ledger th{padding:7px 5px;border-bottom:1px solid #e8eef1;text-align:left}.ledger th{color:#567285}.visually-hidden{position:absolute!important;height:1px;width:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.footer{text-align:center;margin-top:24px;font-size:.76rem;color:#78909e}
+@media(max-width:620px){.topbar{padding:11px 15px 4px;font-size:.72rem}.shell{padding:10px 10px 45px}.headline{margin:8px auto 17px}.headline h1{font-size:2rem}.headline p{font-size:.87rem}.card{border-radius:18px}.statusline{padding:10px 13px;font-size:.78rem}.scene{height:294px}.machine{left:45%;top:35%;width:69px;height:98px;border-width:2px;border-radius:10px}.machine:before{left:19px;width:28px}.machine .screener{left:10px;top:21px;width:45px;height:47px}.scanner-ring{width:29px;height:29px}.machine .beam{top:69px;left:30px;height:43px;width:4px}.machine-label{top:25%;font-size:.7rem}.platform{top:49%;left:3%;right:9%;height:43px}.entry-label{left:3%;top:37%;font-size:.68rem}.bins{width:65px;right:2%;top:22%;gap:8px}.bin{min-height:46px;font-size:.62rem}.bin strong{font-size:.85rem}.parcel{width:62px;height:51px;border-width:2px;border-radius:9px}.parcel strong{font-size:1.04rem}.parcel small{font-size:.55rem}.scene-top{left:13px;right:13px;font-size:.65rem}.scene-note{left:13px;right:13px;font-size:.67rem;bottom:9px}.action{padding:17px 13px 21px;min-height:161px}.action h2{font-size:1.03rem}.action p{font-size:.83rem}.btn{font-size:.87rem;min-height:46px;padding:10px 15px}.result{margin-top:14px;padding:18px 12px}.metric{padding:10px 4px}.metric strong{font-size:1.4rem}.metric span{font-size:.7rem}.feedback{padding:11px 14px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.001ms!important;transition-duration:.001ms!important}}
+
+/* v0.4: scenario-first, transparent statistical evidence and editable outlier fences */
+.topbar-actions{display:flex;gap:14px;align-items:center}
+.text-button{border:0;background:none;color:#076e76;font-size:.84rem;font-weight:750;padding:7px 3px;text-decoration:underline;text-underline-offset:3px}
+.rulebar{display:grid;grid-template-columns:1fr auto;align-items:center;gap:4px 14px;padding:12px 23px;background:#f4fafb;border-top:1px solid #e3edf0;border-bottom:1px solid #e3edf0}
+.rulebar strong{font-size:.86rem;color:#214f62}.rulebar .rule-line{font-size:.81rem;color:#526d7d}.rulebar .record-reason{font-size:.83rem;line-height:1.5;color:#3c5668;grid-column:1/2}
+.rulebar .text-button{grid-column:2/3;grid-row:1/3;white-space:nowrap}
+.rulebar .reason-active{font-weight:750;color:#96511a}
+.explain{border-top:1px solid #e0ebee;padding:18px 22px 21px;background:#fcfefe;text-align:left}
+.explain header{display:flex;justify-content:space-between;align-items:start;gap:12px}
+.explain h3{font-size:1.05rem;margin:0;letter-spacing:-.02em}
+.explain p{font-size:.83rem;margin:6px 0;color:#607787;line-height:1.6}
+.explain .explain-close{border:0;background:transparent;color:#587280;text-decoration:underline;padding:2px 3px;font-size:.8rem}
+.iqr-facts{display:flex;flex-wrap:wrap;gap:8px;margin:11px 0}
+.iqr-facts span{font-size:.78rem;border:1px solid #dce9ea;background:#edf8f7;padding:4px 9px;border-radius:8px;font-variant-numeric:tabular-nums}
+.iqr-graphic{background:#f3f8fa;border:1px solid #dfeaec;border-radius:12px;padding:10px 9px 3px}
+.iqr-graphic svg{width:100%;height:auto;display:block}
+.iqr-graphic .transitionable{transition:x .24s ease,width .24s ease,transform .24s ease,fill .24s ease,stroke .24s ease}
+.iqr-graphic .axis-label{fill:#536c7c;font-size:11px}
+.iqr-graphic .fig-label{fill:#244b5d;font-size:12px;font-weight:750}
+.iqr-graphic .fence-label{fill:#aa6331;font-size:11px;font-weight:700}
+.iqr-plot-note{font-size:.83rem;color:#465f6f;margin-top:8px;font-weight:750;min-height:20px}
+.iqr-plot-note strong{color:#0a7881}
+.iqr-controls{margin-top:12px;border-top:1px solid #dfeaec;padding-top:13px}
+.iqr-controls label{display:flex;justify-content:space-between;align-items:center;gap:12px;font-weight:800;font-size:.86rem}
+.iqr-controls input{width:100%;accent-color:#087f85;margin:10px 0 4px}
+.iqr-controls .detail{font-size:.78rem;line-height:1.55;color:#547181;margin:5px 0 9px}
+.iqr-controls .controlrow{display:flex;align-items:center;gap:11px;flex-wrap:wrap}
+.iqr-controls output{font-variant-numeric:tabular-nums;color:#006a71}
+.evidence-tag{display:inline-block;background:#e7f7ef;color:#20674e;border-radius:7px;font-weight:800;font-size:.77rem;padding:2px 8px;margin-right:6px}
+.feedback .evidence{color:#316477;font-weight:650;margin-top:5px}
+.modal{border:0;border-radius:22px;max-width:min(560px,calc(100vw - 28px));width:100%;max-height:min(90vh,770px);overflow-y:auto;padding:27px;background:white;color:#17344b;box-shadow:0 25px 95px #071f3570}
+.modal::backdrop{background:#092b3db8;backdrop-filter:blur(3px)}
+.modal .eyebrow{margin-bottom:9px}.modal h2{font-size:clamp(1.5rem,4vw,1.95rem);letter-spacing:-.045em;line-height:1.25;margin:4px 0 10px}
+.modal .lead{font-size:.97rem;color:#355267;margin:0 0 14px}
+.modal .objective{background:#eaf7f5;border:1px solid #cbe9e3;border-radius:13px;padding:14px 16px;margin:16px 0;font-size:.9rem}
+.modal .objective strong{display:block;color:#075f69;margin-bottom:3px}
+.modal .steps{display:grid;gap:9px;margin:13px 0 15px}
+.modal .step{display:flex;gap:10px;align-items:start;font-size:.88rem;color:#355268;line-height:1.55}
+.modal .step span:first-child{display:grid;place-items:center;flex:none;width:25px;height:25px;border-radius:100%;background:#e2f0f2;color:#156c78;font-weight:850}
+.modal .caution{font-size:.82rem;color:#79511d;background:#fff7e7;border-left:3px solid #efb65e;padding:10px 13px;border-radius:0 9px 9px 0;margin:12px 0 16px}
+.modal .modal-actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+.ledger th{white-space:nowrap}
+.ledger td:last-child{min-width:230px}
+@media(max-width:620px){.topbar-actions{gap:7px}.topbar .text-button{font-size:.72rem}.rulebar{grid-template-columns:1fr;padding:10px 12px;gap:4px}.rulebar .rule-line,.rulebar .record-reason{font-size:.77rem;grid-column:1}.rulebar .text-button{grid-column:1;grid-row:auto;justify-self:start;font-size:.78rem}.explain{padding:15px 11px 18px}.explain h3{font-size:.95rem}.iqr-facts{gap:5px}.iqr-facts span{font-size:.69rem;padding:4px 7px}.iqr-graphic{padding:3px 1px 1px}.iqr-plot-note{font-size:.75rem}.modal{padding:20px 16px}.modal .lead{font-size:.89rem}.modal .step{font-size:.82rem}}
+@media(prefers-reduced-motion:reduce){.iqr-graphic .transitionable{transition:none!important}}
+.mobile-pan-hint{display:none!important}
+.quartile-explanation{margin-top:12px;color:#446476;font-size:.8rem}.quartile-explanation summary{font-weight:750;cursor:pointer;color:#136e77}.quartile-explanation p{margin:7px 0 0;padding:10px 12px;background:#eef7f7;border-radius:9px}
+@media(max-width:620px){.iqr-graphic{overflow-x:auto;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}.iqr-graphic svg{width:750px;min-width:750px;max-width:none}.mobile-pan-hint{display:block!important;font-size:.74rem!important;color:#516f7c!important;margin:6px 2px!important}}
+
+/* v0.5: learner-facing typography and staged guidance; local font fallbacks only. */
+:root{--ink:#17354b;--muted:#435a69;--edge:#d7e3e9}
+body{line-height:1.6;word-break:keep-all;overflow-wrap:break-word}
+.headline h1{font-size:clamp(28px,3.4vw,36px);letter-spacing:-.025em;font-weight:750}
+.headline p{font-size:16px;color:#385366}
+.eyebrow{font-size:13px;letter-spacing:.025em;font-weight:700}
+.topbar{font-size:14px}.topbar a{color:#36576b}.mark{font-weight:700;letter-spacing:.025em}
+.statusline{font-size:14px;font-weight:700}.statusline .count{color:#36566a}
+.scene-top{font-size:13px}.machine-label{font-size:14px;font-weight:700}.entry-label{font-size:13px}.bin{font-size:12px;font-weight:700}.parcel small{font-size:12px;font-weight:700}.scene-note{font-size:13px;color:#c6e5ed}
+.action h2{font-size:21px;letter-spacing:-.015em;font-weight:750}
+.action p{font-size:16px;color:#43596b;line-height:1.65}
+.btn{font-size:16px;font-weight:700;letter-spacing:0;min-height:48px}
+.btn.tiny{font-size:14px;min-height:44px}
+.feedback{font-size:16px;color:#295668}.feedback strong{font-size:17px}
+.result h2{font-size:23px}.result-lead,.compare,.concept{font-size:16px}.result-lead{color:#435969}
+.metric span{font-size:14px;color:#365668}
+.advanced-details summary,.advanced-body p,.advanced-body label,.ledger,.footer{font-size:14px}
+.advanced-body .small{font-size:14px;color:#425969}.footer{color:#486071}
+.rulebar .rule-line,.rulebar .record-reason{font-size:15px;color:#38576b}
+.rulebar strong{font-size:15px}.rulebar .reason-active{color:#88430c}
+.rulebar .text-button,.topbar .text-button{font-size:14px}
+.explain h3{font-size:19px;letter-spacing:-.015em}.explain p{font-size:15px;color:#42596c}
+.explain .explain-close{font-size:14px;color:#35556b}
+.iqr-facts span{font-size:14px}.iqr-plot-note,.iqr-formula,.iqr-controls label,.iqr-controls .detail,.quartile-explanation{font-size:15px;color:#3c586a}
+.iqr-graphic .axis-label{font-size:14px;fill:#3f596a}.iqr-graphic .fig-label{font-size:15px}.iqr-graphic .fence-label{font-size:14px;fill:#88430c}
+.modal{max-width:min(535px,calc(100vw - 28px));padding:28px}
+.modal h2{font-size:clamp(23px,3vw,27px);line-height:1.32;letter-spacing:-.025em;font-weight:750}
+.modal .lead{font-size:16px;color:#304c60;line-height:1.65}
+.modal .objective{font-size:16px;line-height:1.6}.modal .objective strong{font-weight:750}
+.modal .caution{font-size:15px;line-height:1.55;color:#755016}
+.case-comparison{border:1px solid #e9dcc7;background:#fffbf3;border-radius:13px;padding:13px 15px;margin:12px auto;max-width:590px;text-align:left}
+.case-comparison .case-values{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:7px}
+.case-comparison .case-value{background:white;border:1px solid #efdfca;border-radius:10px;padding:9px 11px}
+.case-comparison .case-value span{display:block;font-size:14px;color:#525c63}
+.case-comparison .case-value strong{display:block;font-size:23px;font-weight:750;font-variant-numeric:tabular-nums;line-height:1.35}
+.case-comparison p{font-size:15px;margin:0;color:#65451e;text-align:left}
+.source-panel{margin:15px auto;max-width:590px;border:1px solid #cce5e2;background:#f0f9f7;border-radius:14px;padding:16px;text-align:left}
+.source-panel h3{margin:0 0 7px;font-size:19px;letter-spacing:-.015em}
+.source-panel .source-values{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.source-panel .source-values>div{border-radius:10px;padding:11px;background:white;border:1px solid #d0e5e0}
+.source-panel .source-values span{display:block;font-size:14px;color:#425a67}
+.source-panel .source-values strong{display:block;font-size:24px;font-variant-numeric:tabular-nums}
+.source-panel p{font-size:15px;text-align:left;margin:5px 0 11px;color:#38586a}
+.source-panel .prompt{font-size:17px;font-weight:750;color:#163e54;margin:10px 0}
+.source-panel .source-buttons{justify-content:flex-start}
+#source-title:focus{outline:none} /* programmatically announced static heading */
+#source-panel:focus-within{border-color:#94cfca}
+.modal .modal-actions{justify-content:flex-end}
+@media(max-width:620px){
+  .topbar{font-size:13px}.topbar .text-button{font-size:13px}.shell{padding:10px 12px 45px}
+  .headline h1{font-size:28px}.headline p{font-size:16px}
+  .statusline{font-size:13px}.scene-top{font-size:12px}.machine-label{font-size:12px}.entry-label{font-size:12px}
+  .bin{font-size:11px}.parcel small{font-size:10px}.scene-note{font-size:12px}
+  .action h2{font-size:20px}.action p{font-size:16px}.btn{font-size:16px;min-height:48px}
+  .rulebar .rule-line,.rulebar .record-reason{font-size:14px}.rulebar .text-button{font-size:14px}
+  .explain h3{font-size:18px}.explain p{font-size:15px}.iqr-facts span{font-size:14px}
+  .iqr-plot-note,.iqr-formula,.iqr-controls label,.iqr-controls .detail,.quartile-explanation{font-size:14px}
+  .mobile-pan-hint{font-size:14px!important;color:#415d6f!important}
+  .metric span{font-size:13px}.modal{padding:22px 18px}.modal .lead{font-size:16px}.modal .objective{font-size:16px}
+  .case-comparison .case-values,.source-panel .source-values{grid-template-columns:1fr 1fr}
+  .case-comparison .case-value strong,.source-panel .source-values strong{font-size:20px}
+  .source-panel{padding:13px}.source-panel .source-buttons .btn{width:100%}
+}
+
+.decision-recap{margin:18px 0 20px;padding:18px;border:1px solid #bacdd2;border-radius:18px;background:#f3f8f7;color:#16343a}
+.recap-heading h3{margin:0 0 4px;font-size:1.18rem;line-height:1.4}.recap-heading p{margin:0;color:#375860;font-size:.94rem}
+.recap-boundary{font-weight:750;margin:14px 0;color:#224a50;font-size:.94rem}
+.recap-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,290px),1fr));gap:12px}
+.recap-item{border:1px solid #c3d8dc;border-radius:13px;background:white;padding:15px;color:#17353a}
+.recap-item h4{margin:0 0 10px;font-size:1.05rem;line-height:1.35}
+.recap-item dl{margin:0;display:grid;gap:8px}.recap-item dl>div{display:grid;grid-template-columns:88px minmax(0,1fr);gap:8px;align-items:baseline}
+.recap-item dt{font-weight:750;font-size:.88rem;color:#46616c}.recap-item dd{margin:0;font-size:.96rem;color:#193c43}
+.recap-item .recap-verdict{margin:12px 0 0;padding:9px 11px;border-radius:10px;background:#e6f3ec;font-size:.92rem;line-height:1.55}
+.recap-item .recap-verdict.is-warning{background:#fff0df}
+.recap-caution{font-size:.87rem;color:#3d5d65;margin:14px 0 0}
+@media(max-width:450px){.decision-recap{padding:14px}.recap-item dl>div{grid-template-columns:80px minmax(0,1fr)}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">학습활동으로 건너뛰기</a>
+<header class="topbar"><a href="../../courses/bigdata-planning-analysis/index.html">← 빅데이터 기획 및 분석</a><span class="topbar-actions"><button class="text-button" id="mission-help" type="button">미션 다시 보기</button><span class="mark">SIM LAB · 7주 2강</span></span></header>
+<main id="main" class="shell">
+  <div class="headline"><div class="eyebrow">직접 해보는 데이터 분석</div><h1>데이터 정제 공장</h1><p>의심스러운 기록을 확인하고, 잘못된 값만 바로잡아 보세요.</p></div>
+  <section class="card" aria-label="데이터 검사 미션">
+    <div class="statusline"><span id="status-word">이상값 검사 미션</span><span class="count" id="status-count">준비 / 12건</span></div>
+    <div class="track" role="progressbar" aria-label="데이터 검사 진행률" aria-valuemin="0" aria-valuemax="12" aria-valuenow="0" id="progressbar"><div id="progress"></div></div>
+    <div class="scene" id="scene" data-phase="intro" role="img" aria-label="데이터 기록이 컨베이어벨트를 따라 검사기로 이동하는 공장. 보존·수정·제외 경로가 표시됩니다.">
+      <div class="scene-top"><span class="lamp" id="factory-lamp">검사기 대기 중</span><span>주간 학습시간 기록</span></div>
+      <span class="entry-label">데이터 투입</span><span class="machine-label">데이터 검사기</span>
+      <div class="platform" aria-hidden="true"></div>
+      <div class="machine" aria-hidden="true"><div class="screener"><div class="scanner-ring"></div></div><div class="beam"></div></div>
+      <div class="lineout keep" aria-hidden="true"></div><div class="lineout fix" aria-hidden="true"></div><div class="lineout drop" aria-hidden="true"></div>
+      <div class="bins" aria-hidden="true"><div class="bin keep">보존<strong id="n-keep">0</strong></div><div class="bin fix">수정<strong id="n-fix">0</strong></div><div class="bin drop">제외<strong id="n-drop">0</strong></div></div>
+      <div class="parcel" id="parcel" hidden aria-hidden="true"><small id="parcel-id">A01</small><strong id="parcel-value">40분</strong></div>
+      <div class="scene-note">상자는 움직이는 비유입니다. 의심값 검사는 IQR 계산으로 진행합니다.</div>
+    </div>
+    <section class="rulebar" aria-label="현재 데이터 검사 근거">
+      <div class="rule-line"><strong>현재 검사 범위</strong> <span id="rule-summary">23.5~83.5분 (IQR 1.5배)</span></div>
+      <div class="record-reason" id="record-reason" aria-live="polite">범위 밖은 확인이 필요한 기록입니다. 아직 오류로 확정된 것은 아닙니다.</div>
+      <button class="text-button" id="rule-explain" type="button" aria-expanded="false" aria-controls="criterion-panel">IQR 상자그림 보기</button>
+    </section>
+    <div class="action" id="action" aria-live="polite">
+      <h2 id="action-title">공장을 가동해 볼까요?</h2>
+      <p id="action-desc">기록을 하나씩 검사합니다. 의심스러운 값이 나오면 잠시 멈춥니다.</p>
+      <div id="case-comparison" class="case-comparison" hidden aria-live="polite">
+        <div class="case-values"><div class="case-value"><span>현재 기록</span><strong id="case-value">90분</strong></div><div class="case-value"><span>검사 기준 상한</span><strong id="case-upper">83.5분</strong></div></div>
+        <p id="case-reason">기준보다 높은 값이어서 확인이 필요해요.</p>
+      </div>
+      <div class="btnrow" id="intro-buttons"><button class="btn primary" id="start">▶ 검사 시작하기</button></div>
+      <div class="btnrow" id="decision-buttons" hidden><button class="btn primary" id="verify">🔍 원본 확인하기</button><button class="btn danger" id="delete">확인 없이 제외하기</button></div>
+      <section id="source-panel" class="source-panel" aria-labelledby="source-title" hidden>
+        <h3 id="source-title" tabindex="-1">원본 기록을 확인했어요</h3>
+        <p id="source-note">독립된 학습 로그를 확인했습니다.</p>
+        <div class="source-values"><div><span>집계표의 값</span><strong id="source-raw">90분</strong></div><div><span>원본 로그의 값</span><strong id="source-actual">90분</strong></div></div>
+        <p class="prompt">이 기록을 어떻게 처리할까요?</p>
+        <div class="btnrow source-buttons"><button class="btn primary" id="keep-source" type="button">그대로 남기기</button><button class="btn" id="correct-source" type="button">원본값으로 바로잡기</button></div>
+      </section>
+      <div class="btnrow" id="continue-buttons" hidden><button class="btn primary" id="continue">다음 데이터 보기 →</button></div>
+      <div class="btnrow" id="running-buttons" hidden><button class="btn tiny" id="fast-forward">검사 빠르게 진행</button></div>
+    </div>
+    <div class="feedback" id="feedback" hidden role="status"><strong id="feedback-title"></strong><p id="feedback-text"></p><p class="evidence" id="feedback-evidence"></p></div>
+    <section class="explain" id="criterion-panel" hidden aria-labelledby="criterion-title">
+      <header><h3 id="criterion-title">이 값은 왜 의심스러울까요?</h3><button class="explain-close" id="chart-close" type="button">그림 접기</button></header>
+      <p>가운데 상자는 자료의 중간 50%를 나타냅니다. 주황색 점선을 벗어난 값은 <strong>확인이 필요한 후보</strong>입니다. 반드시 오류라는 뜻은 아닙니다.</p>
+      <div class="iqr-facts"><span>Q1 <strong id="viz-q1">46</strong>분</span><span>중앙값 <strong id="viz-med">53</strong>분</span><span>Q3 <strong id="viz-q3">61</strong>분</span><span>IQR = <strong id="viz-iqr">15</strong>분</span></div>
+      <div class="iqr-graphic" id="iqr-graphic" tabindex="0" role="group" aria-label="IQR 상자그림. 작은 화면에서는 가로로 스크롤하여 전체 그림 확인"><svg id="iqr-plot" viewBox="0 0 820 210" role="img" aria-label="데이터의 사분위수 상자그림과 IQR 배수에 따른 의심값 경계"></svg></div>
+      <p class="mobile-pan-hint">↔ 그림을 좌우로 밀어 전체 범위를 확인하세요.</p>
+      <div class="iqr-plot-note" id="iqr-plot-note" aria-live="polite">현재 배수에 따른 검사 경계와 데이터 위치가 나타납니다.</div>
+      <p class="iqr-formula" id="iqr-formula">하한 = Q1 − 배수×IQR / 상한 = Q3 + 배수×IQR</p>
+      <details class="quartile-explanation"><summary>Q1·Q3·IQR 계산 원리 보기</summary><p>원자료 12개를 작은 순서로 정렬합니다. 아래쪽 6개 값의 중앙 두 수(45, 47)의 평균이 <strong>Q1=46</strong>, 위쪽 6개 값의 중앙 두 수(60, 62)의 평균이 <strong>Q3=61</strong>입니다. 따라서 <strong>IQR=61−46=15분</strong>입니다. 사분위수를 구하는 방법은 소프트웨어에 따라 차이가 날 수 있으며, 이 실습은 '양쪽 절반의 중앙값' 방법을 사용합니다.</p></details>
+      <div class="iqr-controls" id="iqr-controls" hidden>
+        <label for="iqr">의심값을 찾는 기준 조절 <output id="iqr-value">1.5배</output></label>
+        <input id="iqr" type="range" min="1" max="3" step="0.5" value="1.5">
+        <p class="detail">배수를 높이면 검사 범위가 넓어집니다. <strong>IQR 자체는 그대로</strong>이고 경계선만 움직입니다. 결과를 바꾸려면 다시 검사해야 합니다.</p>
+        <p class="detail" id="iqr-detail">탐지 경계를 조절해 보세요.</p>
+        <div class="controlrow"><button class="btn primary" id="recheck" type="button">바뀐 기준으로 다시 검사하기 →</button></div>
+      </div>
+    </section>
+  </section>
+  <section class="card result" id="result" hidden aria-labelledby="result-title">
+    <h2 id="result-title">내가 처리한 결과</h2><p class="result-lead" id="result-intro">어떤 값을 남기고 바로잡았는지 살펴보세요.</p>
+    <div class="result-metrics"><div class="metric"><strong id="r-kept">0</strong><span>그대로 남긴 기록</span></div><div class="metric"><strong id="r-fixed">0</strong><span>바로잡은 기록</span></div><div class="metric loss"><strong id="r-dropped">0</strong><span>제외한 기록</span></div></div>
+    <div class="compare"><strong>잘못된 기록을 바로잡으니 평균은 어떻게 달라졌을까요?</strong><div class="meanline"><span>처리 전 (오류 포함)</span><b id="raw-mean">-</b></div><div class="meanline"><span>처리 후</span><b id="clean-mean">-</b></div><span class="small">평균이 변했다고 무조건 잘 처리한 것은 아닙니다. 실제로 올바른 기록을 남겼는지도 확인해야 합니다.</span></div>
+    <section class="decision-recap" aria-labelledby="recap-title" id="decision-recap"><div class="recap-heading"><h3 id="recap-title">내 판단의 근거 다시 보기</h3><p>의심 기록에 대해 검사 경계, 원본 확인 여부, 직접 내린 결정을 연결합니다.</p></div><p class="recap-boundary" id="recap-boundary"></p><div class="recap-list" id="recap-list" aria-live="polite"></div><p class="recap-caution">검사기를 자동 통과한 기록은 <strong>원본을 확인한 것이 아닙니다.</strong> 모든 기록의 상세 처리는 아래에서 열어볼 수 있습니다.</p></section>
+<div class="concept"><strong id="conclusion-title">핵심 원리</strong><span id="conclusion">검사 기준을 넘은 값도 정상일 수 있습니다. 원본을 확인하고 처리 방법을 결정하세요.</span></div>
+    <div class="result-actions"><button class="btn primary" id="retry">↻ 다시 도전하기</button><button class="btn" id="advanced-open" aria-expanded="false">📊 IQR 검사 기준 바꿔보기</button></div>
+  </section>
+  <details class="advanced-details" id="advanced" hidden>
+    <summary>12개 기록의 검사 결과 자세히 보기</summary>
+    <div class="advanced-body">
+      <p><strong>통과</strong>는 값이 IQR 범위 안이라는 의미일 뿐, 원본과 일치하는지 확인한 것은 아닙니다. <strong>원본 확인</strong>은 합성된 독립 원천 로그를 대조하는 실습입니다.</p>
+      <div class="ledger"><table><thead><tr><th scope="col">기록</th><th scope="col">입력값</th><th scope="col">처리</th><th scope="col">판정 근거</th></tr></thead><tbody id="ledger"></tbody></table></div>
+    </div>
+  </details>
+  <footer class="footer">교육용 가상 데이터 · 실제 학생 기록 아님 · 성적 저장 없음</footer>
+</main>
+<dialog id="mission-dialog" class="modal" aria-labelledby="mission-title" aria-describedby="mission-description">
+  <div class="eyebrow">7주 2강 · 결측값과 이상값</div>
+  <h2 id="mission-title">이상해 보이는 기록, 모두 오류일까요?</h2>
+  <p class="lead" id="mission-description">대학에서 학생 12명의 일주일 학습시간을 살펴보고 있습니다. 그런데 평균이 <strong>약 150분</strong>이나 됩니다. 이 숫자를 그대로 믿어도 될까요?</p>
+  <div class="objective"><strong>오늘의 미션</strong>의심스러운 기록을 찾아보세요. 실제로 올바른 기록은 남기고, 잘못 입력된 값은 바로잡아 봅니다.</div>
+  <p class="lead">검사를 시작하면 기록들이 공장을 지나갑니다. 의심스러운 값이 나타나면 멈춰서 직접 판단할 수 있습니다.</p>
+  <div class="modal-actions"><button class="btn primary" type="button" id="mission-begin">▶ 검사 시작하기</button><button class="btn primary" type="button" id="mission-resume" hidden>학습 화면으로 돌아가기</button></div>
+</dialog>
+<script id="data-model">
+'use strict';
+// Educational synthetic data. `source` represents an independently verified source record in this fictional activity.
+const LabModel=(()=>{
+ const rows=[
+  {id:'A01',raw:38,source:38},{id:'A02',raw:42,source:42},{id:'A03',raw:50,source:50},
+  {id:'A04',raw:57,source:57},{id:'A05',raw:60,source:60},
+  {id:'A06',raw:90,source:90,sourceNote:'원천 LMS 로그: 40분 + 50분 = 90분. 집계표와 일치합니다.',truth:'실제 90분 학습한 기록입니다. 다른 기록보다 길지만 정상입니다.'},
+  {id:'A07',raw:45,source:45},{id:'A08',raw:47,source:47},
+  {id:'A09',raw:52,source:52},{id:'A10',raw:54,source:54},
+  {id:'A11',raw:1200,source:120,sourceNote:'원천 LMS 로그: 70분 + 50분 = 120분. 집계표의 1200분은 입력 실수입니다.',truth:'원본에는 120분으로 기록되어 있습니다. 0이 하나 더 입력된 오류입니다.'},
+  {id:'A12',raw:62,source:62}
+ ];
+ const mean=a=>a.length?a.reduce((v,n)=>v+n,0)/a.length:null;
+ const median=a=>{if(!a.length)return null;const b=[...a].sort((x,y)=>x-y),n=b.length,m=Math.floor(n/2);return n%2?b[m]:(b[m-1]+b[m])/2};
+ function bounds(mult=1.5){if(!Number.isFinite(mult)||mult<0)throw Error('Invalid multiplier');const sorted=rows.map(r=>r.raw).sort((a,b)=>a-b),mid=sorted.length/2,q1=median(sorted.slice(0,mid)),q3=median(sorted.slice(mid)),iqr=q3-q1;return {q1,q3,median:median(sorted),iqr,low:q1-mult*iqr,high:q3+mult*iqr,mult}};
+ const suspicious=(row,b)=>row.raw<b.low||row.raw>b.high;
+ function evaluate(decisions={},mult=1.5){const b=bounds(mult);const processed=rows.map(r=>{const flagged=suspicious(r,b),choice=flagged?(decisions[r.id]||'unanswered'):'auto';const output=choice==='delete'?'drop':choice==='correct'&&r.raw!==r.source?'fix':'keep';const value=output==='drop'?null:output==='fix'?r.source:r.raw;return {...r,flagged,choice,output,value,uncorrected:flagged&&choice==='keep'&&r.raw!==r.source,unnecessaryEdit:flagged&&choice==='correct'&&r.raw===r.source}});const completed=processed.filter(r=>r.choice!=='unanswered');const retained=completed.filter(r=>r.output!=='drop');return {processed,bounds:b,flagged:processed.filter(r=>r.flagged).length,validKept:completed.filter(r=>r.output==='keep').length,corrected:completed.filter(r=>r.output==='fix').length,dropped:completed.filter(r=>r.output==='drop').length,sourceLoss:completed.filter(r=>r.output==='drop'&&Number.isFinite(r.source)).length,uncorrected:completed.filter(r=>r.uncorrected).length,unnecessaryCorrections:completed.filter(r=>r.unnecessaryEdit).length,rawMean:mean(rows.map(r=>r.raw)),cleanMean:mean(retained.map(r=>r.value))}};
+ return Object.freeze({rows,bounds,suspicious,evaluate,mean,median});
+})();
+window.LabModel=LabModel;
+</script>
+<script>
+(()=>{'use strict';
+const $=id=>document.getElementById(id);
+const M=window.LabModel;
+const S={phase:'intro',index:0,decisions:{},history:[],mult:1.5,previewMult:1.5,token:0,plotMult:1.5,hasSeenIntro:false};
+const el={parcel:$('parcel'),scene:$('scene'),action:$('action'),feedback:$('feedback'),result:$('result'),advanced:$('advanced'),panel:$('criterion-panel'),dialog:$('mission-dialog')};
+const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const fmt=n=>n===null?'자료 없음':Number(n).toLocaleString('ko-KR',{maximumFractionDigits:1})+'분';
+let plotRaf=null;
+function show(id,v=true){$(id).hidden=!v}
+function controls(phase){S.phase=phase;el.scene.dataset.phase=phase;show('intro-buttons',phase==='intro');show('decision-buttons',phase==='decision');show('continue-buttons',phase==='feedback');show('running-buttons',phase==='running');show('source-panel',phase==='source');show('record-reason',phase!=='decision');}
+function message(title,desc){$('action-title').textContent=title;$('action-desc').textContent=desc}
+function progress(){const n=S.history.length;$('progress').style.width=(n/M.rows.length*100)+'%';$('progressbar').setAttribute('aria-valuenow',String(n));$('status-count').textContent=n+' / '+M.rows.length+'건';for(const [id,x] of [['n-keep','keep'],['n-fix','fix'],['n-drop','drop']])$(id).textContent=S.history.filter(r=>r.output===x).length;}
+function setRuleSummary(){const b=M.bounds(S.mult);$('rule-summary').textContent=`${fmt(b.low)} ~ ${fmt(b.high)} (IQR ${b.mult.toFixed(1)}배)`;}
+function reasonFor(row,flag,phase='scanning'){
+ const b=M.bounds(S.mult),within=(!flag);
+ if(phase==='verified'){
+   if(row.raw===row.source)return `${row.id} · 원본은 ${fmt(row.source)}으로 집계표와 일치해요. 기준 밖이지만 실제로 기록된 값입니다.`;
+   return `${row.id} · 원본 ${fmt(row.source)}과 집계표 ${fmt(row.raw)}이 달라요. 원본값으로 수정해야 합니다.`;
+ }
+ if(phase==='deleted')return `${row.id} · 원본을 확인하지 않고 제외했어요. 실제 기록 ${fmt(row.source)}이 사라졌습니다.`;
+ if(within)return `${row.id}: ${fmt(row.raw)}은 기준 범위 안이라 검사기를 통과했어요. 원본과 비교한 것은 아닙니다.`;
+ const side=row.raw>b.high?`상한 ${fmt(b.high)}보다 ${fmt(row.raw-b.high)} 큽니다`:`하한 ${fmt(b.low)}보다 ${fmt(b.low-row.raw)} 작습니다`;
+ return `${row.id}: ${fmt(row.raw)}은 ${side}. 확인이 필요하지만, 바로 오류라고 판단할 수는 없어요.`;
+}
+function ruleReason(row,flag,phase){$('record-reason').textContent=reasonFor(row,flag,phase);$('record-reason').classList.toggle('reason-active',Boolean(flag)&&phase==='scanning');}
+function placeParcel(row,type='normal'){el.parcel.hidden=false;el.parcel.className='parcel '+(type==='decision'?'warn':type==='fix'?'fix':type==='drop'?'drop':'');$('parcel-id').textContent=row.id;$('parcel-value').textContent=fmt(type==='fix'?row.source:row.raw);}
+function coord(stage,x,y){return{x:stage.clientWidth*x/100,y:stage.clientHeight*y/100}}
+function moveTo(x,y){el.parcel.style.left=x+'px';el.parcel.style.top=y+'px'}
+function travel(row,from,to,route='keep'){
+ placeParcel(row,route==='fix'?'fix':route==='drop'?'drop':'normal');
+ const a=coord(el.scene,...from),b=coord(el.scene,...to),w=el.parcel.offsetWidth,h=el.parcel.offsetHeight;
+ const duration=reduced?30:route==='enter'?410:410,t0=performance.now(),token=S.token;
+ return new Promise(resolve=>{function frame(now){if(token!==S.token){resolve(false);return}const t=Math.min(1,(now-t0)/duration),e=t*t*(3-2*t);moveTo(a.x+(b.x-a.x)*e-w/2,a.y+(b.y-a.y)*e-h/2);if(t>=1)resolve(true);else requestAnimationFrame(frame)}requestAnimationFrame(frame)});
+}
+function stagePoint(name){return{start:[5,56],machine:[45,56],keep:[84,31],fix:[84,49],drop:[84,68]}[name]}
+function wait(ms){return new Promise(resolve=>setTimeout(resolve,reduced?10:ms))}
+function textStatus(t){$('factory-lamp').textContent=t;$('status-word').textContent=t}
+function append(row,choice,output){S.history.push({...row,choice,output});progress()}
+
+// Accurate boxplot. Native quartiles for the 12 raw observations; IQR is fixed
+// for a fixed dataset. Slider k changes detection fences, not the quartiles.
+// The axis is deliberately zoomed to 0~150 minutes. The 1200-min point is explicitly off-axis.
+const PX={l:62,r:745,y:135,min:0,max:150};
+const xpos=n=>PX.l+((Math.max(PX.min,Math.min(PX.max,n))-PX.min)/(PX.max-PX.min))*(PX.r-PX.l);
+const med=M.bounds(1.5).median;
+function plotSvg(mult){
+ const b=M.bounds(mult),all=M.rows,internal=all.filter(r=>r.raw>=b.low&&r.raw<=b.high&&r.raw<=150).map(r=>r.raw);
+ const minIn=Math.min(...internal),maxIn=Math.max(...internal),fl=xpos(b.low),fh=xpos(b.high);
+ const cand=all.filter(r=>M.suspicious(r,b)),pointColor=r=>M.suspicious(r,b)?'#e69c5b':'#359f98';
+ const stripe=`<rect x="${fl.toFixed(2)}" y="43" width="${(fh-fl).toFixed(2)}" height="117" rx="7" fill="#d9eeec" opacity=".8"/>`;
+ const line=(x1,y1,x2,y2,stroke,width=2,dash='')=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${stroke}" stroke-width="${width}" ${dash?'stroke-dasharray="'+dash+'"':''}/>`;
+ const tx=(x,y,t,cls='axis-label',anchor='middle')=>`<text x="${x}" y="${y}" text-anchor="${anchor}" class="${cls}">${t}</text>`;
+ const xq1=xpos(b.q1),xq3=xpos(b.q3),xm=xpos(b.median);
+ let v=`${stripe}`;
+ [0,30,60,90,120,150].forEach(n=>{const x=xpos(n);v+=line(x,47,x,170,'#d0dfe4',1);v+=tx(x,192,n,'axis-label')});
+ v+=line(PX.l,170,PX.r,170,'#8aa5ae',1.3);
+ v+=line(fl,43,fl,164,'#b76b3b',2.7,'5 5');v+=line(fh,43,fh,164,'#b76b3b',2.7,'5 5');
+ v+=tx(fl,32,`하한 ${fmt(b.low)}`,'fence-label');v+=tx(fh,32,`상한 ${fmt(b.high)}`,'fence-label');
+ // Whiskers are observed min/max within the fences, not the theoretical fence values.
+ v+=line(xpos(minIn),95,xpos(maxIn),95,'#285f6b',3);v+=line(xpos(minIn),83,xpos(minIn),107,'#285f6b',2);v+=line(xpos(maxIn),83,xpos(maxIn),107,'#285f6b',2);
+ v+=`<rect x="${xq1}" y="73" width="${xq3-xq1}" height="44" rx="4" fill="#76c4c0" stroke="#1b6c75" stroke-width="2"/>`;
+ v+=line(xm,73,xm,117,'#17374a',3);
+ v+=tx(xq1,65,'Q1','fig-label');v+=tx(xq3,65,'Q3','fig-label');v+=tx(xm,129,'중앙값','axis-label');
+ const active=S.phase==='decision'?M.rows[S.index]?.id:null;
+ all.forEach((r,i)=>{if(r.raw>150)return;const x=xpos(r.raw),y=147+(i%2?10:0),marked=r.id===active;
+ v+=`<circle cx="${x}" cy="${y}" r="${marked?8.5:5.3}" fill="${pointColor(r)}" stroke="${marked?'#183b5c':'#fff'}" stroke-width="${marked?3:1.5}"><title>${r.id}: ${r.raw}분, ${M.suspicious(r,b)?'IQR 범위 밖 후보':'IQR 범위 안'}</title></circle>`;
+ if(marked)v+=tx(x,y-12,`${r.raw}분`,'fig-label');
+ });
+ v+=`<path d="M755 140 h13 l-6 -6 m6 6 l-6 6" fill="none" stroke="#b97137" stroke-width="2"/>`;
+ v+=`<circle cx="787" cy="151" r="7" fill="${pointColor(all.find(r=>r.raw===1200))}" stroke="#fff" stroke-width="2"/>`;
+ v+=tx(787,131,'1200분','fence-label');
+ v+=tx(PX.r,207,'1200분 값은 그림의 0~150분 축 밖에 별도 표시','axis-label','end');
+ $('iqr-plot').innerHTML=v;
+ $('iqr-plot').setAttribute('aria-label',`주간 학습시간 상자그림. Q1 ${b.q1}, 중앙값 ${b.median}, Q3 ${b.q3}, IQR ${b.iqr}, 배수 ${mult.toFixed(1)}, 경계 ${b.low}에서 ${b.high}분, 의심 ${cand.length}건. 1200분 값은 그림 축 밖에 별도로 표기.`);
+ $('iqr-plot').dataset.lower=String(b.low);$('iqr-plot').dataset.upper=String(b.high);
+ $('iqr-plot-note').textContent=`현재 배수 ${mult.toFixed(1)}배: ${fmt(b.low)}보다 작거나 ${fmt(b.high)}보다 큰 값은 확인 대상 (${cand.length}건)`;
+ $('iqr-formula').textContent=`하한: ${b.q1} − ${mult.toFixed(1)} × ${b.iqr} = ${fmt(b.low)} · 상한: ${b.q3} + ${mult.toFixed(1)} × ${b.iqr} = ${fmt(b.high)}`;
+ $('viz-q1').textContent=b.q1;$('viz-q3').textContent=b.q3;$('viz-med').textContent=b.median;$('viz-iqr').textContent=b.iqr;
+ // On narrow screens the chart deliberately scrolls horizontally. Keep the
+ // moving upper fence and the 90-minute example within the visible window.
+ if(window.innerWidth<=620&&!el.panel.hidden){
+   const region=$('iqr-graphic'),ratio=$('iqr-plot').getBoundingClientRect().width/820;
+   if(region.clientWidth>0){const focusX=(xpos(b.high)+xpos(90))*ratio/2;region.scrollLeft=Math.max(0,focusX-region.clientWidth/2)}
+ }
+ return b;
+}
+function animatePlot(target){
+ if(plotRaf!==null)cancelAnimationFrame(plotRaf);
+ const init=S.plotMult;
+ if(reduced||Math.abs(init-target)<.001){S.plotMult=target;plotSvg(target);return}
+ const t0=performance.now();
+ function run(now){const a=Math.min(1,(now-t0)/220),smooth=a*a*(3-2*a);S.plotMult=init+(target-init)*smooth;plotSvg(S.plotMult);if(a<1)plotRaf=requestAnimationFrame(run);else{plotRaf=null;S.plotMult=target;plotSvg(target)}}
+ plotRaf=requestAnimationFrame(run);
+}
+function openChart(){
+ el.panel.hidden=false;$('rule-explain').setAttribute('aria-expanded','true');$('advanced-open').setAttribute('aria-expanded','true');
+ S.plotMult=S.previewMult;plotSvg(S.previewMult);$('iqr-controls').hidden=S.phase!=='done';
+ // On a phone, show the active suspected value AND its IQR fence without
+ // asking the learner to find it in a horizontally scrollable figure.
+ if(window.innerWidth<=620){requestAnimationFrame(()=>{
+   const region=$('iqr-graphic'),ratio=$('iqr-plot').getBoundingClientRect().width/820;
+   const b=M.bounds(S.previewMult),topFence=xpos(b.high)*ratio;
+   const row=S.phase==='decision'?M.rows[S.index]:null;
+   const target=(row?Math.min(785,xpos(row.raw)):xpos(b.q1))*ratio;
+   const mid=(target+topFence)/2;
+   region.scrollLeft=Math.max(0,mid-region.clientWidth/2);
+ });}
+}
+function closeChart(){el.panel.hidden=true;$('rule-explain').setAttribute('aria-expanded','false');$('advanced-open').setAttribute('aria-expanded','false');}
+function showDecision(row){
+ controls('decision');el.parcel.classList.add('warn');
+ const b=M.bounds(S.mult),upper=row.raw>b.high,limit=upper?b.high:b.low;
+ message(`${fmt(row.raw)} 기록을 확인해 볼까요?`,`검사 기준을 벗어나 잠시 멈췄어요. 왜 그랬는지 살펴보고 다음 행동을 선택하세요.`);
+ $('case-value').textContent=fmt(row.raw);$('case-upper').textContent=fmt(limit);
+ $('case-upper').previousElementSibling.textContent=upper?'검사 기준 상한':'검사 기준 하한';
+ $('case-reason').textContent=upper?`기준보다 ${fmt(row.raw-limit)} 높아요. 하지만 오류라고 확정된 것은 아니에요.`:`기준보다 ${fmt(limit-row.raw)} 낮아요. 하지만 오류라고 확정된 것은 아니에요.`;
+ show('case-comparison',true);ruleReason(row,true);S.previewMult=S.mult;closeChart();
+ $('verify').focus({preventScroll:true});
+}
+function showSource(){
+ if(S.phase!=='decision')return;
+ const row=M.rows[S.index];controls('source');show('case-comparison',false);
+ $('source-raw').textContent=fmt(row.raw);$('source-actual').textContent=fmt(row.source);
+ $('source-note').textContent=row.sourceNote||`독립된 원본 기록에는 ${fmt(row.source)}으로 적혀 있습니다.`;
+ message('원본과 집계표를 비교해 보세요.','값이 같으면 그대로 두고, 다르면 원본값으로 바로잡는 것이 적절합니다.');
+ $('source-title').focus({preventScroll:true});
+}
+async function next(){if(S.phase!=='running')return;
+ for(;S.index<M.rows.length;){
+  const row=M.rows[S.index],b=M.bounds(S.mult),flag=M.suspicious(row,b);
+  textStatus(flag?'의심 기록을 찾았습니다':'기록을 검사하고 있습니다');
+  if(!(await travel(row,stagePoint('start'),stagePoint('machine'),'enter')))return;
+  if(flag){showDecision(row);return}
+  ruleReason(row,false);
+  if(!(await travel(row,stagePoint('machine'),stagePoint('keep'),'keep')))return;
+  append(row,'auto','keep');el.parcel.hidden=true;S.index++;await wait(80);
+ }
+ finish();
+}
+async function choose(choice){
+ if(!(S.phase==='source' && ['keep','correct'].includes(choice)) && !(S.phase==='decision'&&choice==='delete'))return;
+ const row=M.rows[S.index],genuine=row.raw===row.source;
+ S.decisions[row.id]=choice;
+ controls('resolving');show('case-comparison',false);message('선택한 방법을 적용하고 있어요.','잠시 후 처리 결과를 확인할 수 있습니다.');
+ const output=choice==='delete'?'drop':choice==='correct'&&!genuine?'fix':'keep';
+ if(!(await travel(row,stagePoint('machine'),stagePoint(output),output)))return;
+ append(row,choice,output);S.index++;el.parcel.hidden=true;
+ if(choice==='delete'){
+  $('feedback-title').textContent='원본을 확인하지 않고 기록을 제외했어요.';
+  $('feedback-text').textContent=genuine?'이 기록은 실제 90분이었어요. 올바른 값까지 사라졌습니다.':'집계표에는 입력 오류가 있었지만, 원본을 확인했다면 삭제하지 않고 바로잡을 수 있었어요.';
+  $('feedback-evidence').textContent=row.sourceNote||`원본 기록: ${fmt(row.source)}`;
+  message('이 기록은 제외됐어요.','원본을 먼저 확인했더라면 결과가 달라졌을까요?');ruleReason(row,true,'deleted');
+ }else if(genuine&&choice==='keep'){
+  $('feedback-title').textContent='좋아요! 올바른 기록을 지켰어요.';
+  $('feedback-text').textContent='집계표와 원본 모두 90분이에요. 검사 기준 밖이지만 실제로 공부한 시간이므로 남기는 것이 적절합니다.';
+  $('feedback-evidence').textContent=row.sourceNote;
+  message('90분은 정상 기록이었어요.','평균과 다른 값이 있다고 해서 모두 잘못된 것은 아닙니다.');ruleReason(row,true,'verified');
+ }else if(genuine&&choice==='correct'){
+  $('feedback-title').textContent='원본과 이미 같아요. 수정은 필요하지 않았어요.';
+  $('feedback-text').textContent='원본도 집계표도 90분이라 데이터는 그대로 남겼습니다. 왜 수정이 필요하지 않은지 다시 생각해보세요.';
+  $('feedback-evidence').textContent=row.sourceNote;
+  message('90분은 그대로 남겼어요.','원본과 같은 값이라 고칠 부분이 없었습니다.');ruleReason(row,true,'verified');
+ }else if(!genuine&&choice==='correct'){
+  $('feedback-title').textContent='좋아요! 입력 오류를 바로잡았어요.';
+  $('feedback-text').textContent='집계표는 1200분이지만 원본은 120분이에요. 120분으로 수정해 남겼습니다. 수정한 값도 IQR 범위 밖일 수 있습니다.';
+  $('feedback-evidence').textContent=row.sourceNote;
+  message('1200분을 120분으로 고쳤어요.','통계 기준보다 원본과의 일치 여부가 중요합니다.');ruleReason(row,true,'verified');
+ }else{
+  $('feedback-title').textContent='원본과 다른 값이 그대로 남았어요.';
+  $('feedback-text').textContent='집계표의 1200분은 원본 120분과 달라요. 원본을 확인했다면 이 값을 수정하는 것이 적절합니다.';
+  $('feedback-evidence').textContent=row.sourceNote;
+  message('1200분이 수정되지 않았어요.','잘못된 값이 분석 결과에 영향을 줄 수 있습니다.');ruleReason(row,true,'verified');
+ }
+ el.feedback.hidden=false;controls('feedback');show('source-panel',false);
+ $('continue').textContent=S.index===M.rows.length?'결과 확인하기 →':'다음 기록 검사하기 →';$('continue').focus({preventScroll:true});
+}
+
+function renderDecisionRecap(){
+ const b=M.bounds(S.mult), flagged=S.history.filter(r=>M.suspicious(r,b));
+ $('recap-boundary').textContent=`이번 검사: IQR ${S.mult.toFixed(1)}배 · 확인 기준 ${fmt(b.low)}~${fmt(b.high)} · 확인 대상 ${flagged.length}건`;
+ const target=$('recap-list');target.replaceChildren();
+ for(const r of flagged){
+  const checked=r.choice==='keep'||r.choice==='correct';
+  const correct=(r.choice==='keep'&&r.raw===r.source)||(r.choice==='correct'&&r.raw!==r.source);
+  const card=document.createElement('article');card.className='recap-item';
+  const title=document.createElement('h4');title.textContent=`${r.id} · 집계값 ${fmt(r.raw)}`;card.appendChild(title);
+  const dl=document.createElement('dl');
+  const add=(term,val)=>{const div=document.createElement('div'),dt=document.createElement('dt'),dd=document.createElement('dd');dt.textContent=term;dd.textContent=val;div.append(dt,dd);dl.appendChild(div)};
+  add('IQR 검사',r.raw>b.high?`상한 ${fmt(b.high)} 초과 → 의심 후보`:`하한 ${fmt(b.low)} 미만 → 의심 후보`);
+  add('원본 확인',checked?`확인함 · ${fmt(r.source)}`:'실습 중 확인하지 않음');
+  add('내 결정',r.choice==='delete'?'확인 없이 제외':r.choice==='correct'?(r.raw===r.source?'수정 선택 · 실제 값 변경 없음':'원본값으로 바로잡기'):'그대로 보존');
+  card.appendChild(dl);
+  const comment=document.createElement('p');comment.className='recap-verdict'+(correct?'':' is-warning');
+  comment.textContent=r.choice==='delete'?`사후 학습용 정답: 원본은 ${fmt(r.source)}입니다. 실습 중 확인하지 않고 삭제하여 기록이 손실됐습니다.`:
+    correct?(r.raw===r.source?'원본과 일치합니다. 큰 값이어도 정상 기록이므로 보존이 적절합니다.':'원본과 다른 입력 오류입니다. 원본값으로 수정한 판단이 적절합니다.'):
+    r.choice==='correct'&&r.raw===r.source?'원본과 동일한 값이므로 추가 수정은 필요하지 않았습니다. 확인 후 그대로 보존하는 것이 적절합니다.':r.raw===r.source?'원본과 같은 값입니다. 바꾸지 않고 보존해도 되는 기록입니다.':`원본 ${fmt(r.source)}과 달라 입력 오류가 남았습니다. 원본값으로 바로잡아야 합니다.`;
+  card.appendChild(comment);target.appendChild(card);
+ }
+ if(!flagged.length){const p=document.createElement('p');p.textContent='이번 검사 기준에서는 의심 기록이 없었습니다. 탐지되지 않았다는 것만으로 모든 기록이 정확하다는 뜻은 아닙니다.';target.appendChild(p)}
+}
+function verdict(){
+ const ev=M.evaluate(S.decisions,S.mult);
+ $('r-kept').textContent=ev.validKept;$('r-fixed').textContent=ev.corrected;$('r-dropped').textContent=ev.dropped;
+ $('raw-mean').textContent=fmt(ev.rawMean);$('clean-mean').textContent=fmt(ev.cleanMean);
+ const perfect=ev.sourceLoss===0&&ev.corrected===1&&ev.uncorrected===0&&ev.unnecessaryCorrections===0;
+ $('result-intro').textContent=perfect?'정상 기록은 남기고 입력 오류 한 건을 바로잡았어요.':'올바른 기록을 제외했거나 잘못 입력된 값이 남았을 수 있어요. 아래에서 확인해 보세요.';
+ $('conclusion-title').textContent=perfect?'핵심 원리를 발견했어요.':'이번에 배울 점';
+ $('conclusion').textContent='IQR 검사에서 벗어났다고 모두 오류는 아니에요. 원본을 확인한 다음 남길지, 바로잡을지 결정해야 합니다.';
+ renderDecisionRecap();
+ $('ledger').replaceChildren();
+ const b=M.bounds(S.mult);
+ for(const r of S.history){
+  const tr=document.createElement('tr');
+  const explanation=r.choice==='auto'?
+   `${fmt(b.low)}~${fmt(b.high)} 안 → IQR 검사 통과. 원천 확인하지 않음.`:
+   r.choice==='delete'?`원본 확인 없이 제외. 실제 원본값 ${fmt(r.source)}은 손실됨.`:
+   r.choice==='keep'&&r.raw!==r.source?`원본 ${fmt(r.source)}과 다른 값을 그대로 남김 (미수정).`:
+   r.choice==='correct'&&r.raw===r.source?`원본과 같은 값이어서 변경하지 않음 (불필요한 수정 선택).`:
+   r.raw===r.source?`원본 ${fmt(r.source)}과 일치해서 보존.`:
+   `원본 ${fmt(r.source)}과 달라 원본값으로 수정.`;
+  for(const val of [r.id,fmt(r.raw),r.output==='keep'?'보존':r.output==='fix'?'수정':'제외',explanation]){
+   const td=document.createElement('td');td.textContent=val;tr.appendChild(td)}$('ledger').appendChild(tr);
+ }
+}
+function finish(){
+ controls('done');textStatus('실험 완료');el.parcel.hidden=true;el.action.hidden=true;el.feedback.hidden=true;
+ verdict();el.result.hidden=false;$('status-count').textContent=M.rows.length+' / '+M.rows.length+'건';
+ $('advanced').hidden=false;$('advanced').open=false;
+ el.result.appendChild(el.panel);closeChart();$('iqr-controls').hidden=false;
+ S.previewMult=S.mult;$('iqr').value=String(S.mult);$('iqr-value').textContent=S.mult.toFixed(1)+'배';
+ $('record-reason').textContent='검사가 끝났어요. 결과와 판단 이유를 아래에서 확인해 보세요.';
+ el.result.scrollIntoView({behavior:reduced?'instant':'smooth',block:'nearest'});
+}
+function reset(){
+ S.token++;S.phase='intro';S.index=0;S.decisions={};S.history=[];
+ if(plotRaf!==null){cancelAnimationFrame(plotRaf);plotRaf=null}
+ el.feedback.insertAdjacentElement('afterend',el.panel);closeChart();$('iqr-controls').hidden=true;
+ el.parcel.hidden=true;el.result.hidden=true;el.advanced.hidden=true;el.action.hidden=false;el.feedback.hidden=true;show('case-comparison',false);show('source-panel',false);
+ controls('intro');setRuleSummary();textStatus(S.mult===1.5?'검사기 대기 중':`${S.mult.toFixed(1)}배 검사 대기 중`);
+ message('공장을 가동해 볼까요?',S.mult===1.5?'의심스러운 기록이 나오면 잠시 멈춥니다.':'바뀐 IQR 기준으로 다시 검사합니다.');
+ $('record-reason').textContent='검사 범위를 벗어나면 확인이 필요한 기록으로 표시됩니다.';
+ $('iqr').value=String(S.mult);$('iqr-value').textContent=S.mult.toFixed(1)+'배';S.previewMult=S.mult;S.plotMult=S.mult;
+ progress();$('status-count').textContent='준비 / 12건';$('start').focus({preventScroll:true});
+}
+function start(){if(S.phase!=='intro')return;controls('running');message('기록을 검사하고 있어요.','의심스러운 기록이 나오면 잠시 멈춥니다.');next()}
+$('start').addEventListener('click',start);
+$('verify').addEventListener('click',showSource);
+$('keep-source').addEventListener('click',()=>choose('keep'));
+$('correct-source').addEventListener('click',()=>choose('correct'));
+$('delete').addEventListener('click',()=>choose('delete'));
+$('continue').addEventListener('click',()=>{el.feedback.hidden=true;if(S.index>=M.rows.length){finish();return}controls('running');message('다음 기록을 확인하고 있어요.','검사 범위 안이면 통과하고, 밖이면 다시 멈춥니다.');closeChart();next()});
+$('fast-forward').addEventListener('click',()=>{
+ if(S.phase!=='running')return;
+ S.token++;const b=M.bounds(S.mult);
+ while(S.index<M.rows.length&&!M.suspicious(M.rows[S.index],b)){
+  const row=M.rows[S.index];ruleReason(row,false);append(row,'auto','keep');S.index++}
+ el.parcel.hidden=true;
+ if(S.index>=M.rows.length){finish();return}
+ const row=M.rows[S.index];placeParcel(row,'decision');const p=coord(el.scene,...stagePoint('machine'));moveTo(p.x-el.parcel.offsetWidth/2,p.y-el.parcel.offsetHeight/2);showDecision(row);
+});
+$('retry').addEventListener('click',()=>{S.mult=1.5;reset()});
+$('advanced-open').addEventListener('click',()=>{if(el.panel.hidden){openChart();el.panel.scrollIntoView({behavior:reduced?'instant':'smooth',block:'nearest'})}else{closeChart()}});
+$('rule-explain').addEventListener('click',()=>{if(el.panel.hidden)openChart();else closeChart()});
+$('chart-close').addEventListener('click',closeChart);
+$('iqr').addEventListener('input',()=>{
+ const mult=Number($('iqr').value);S.previewMult=mult;$('iqr-value').textContent=mult.toFixed(1)+'배';
+ animatePlot(mult);
+ const b=M.bounds(mult),flag=M.rows.filter(r=>M.suspicious(r,b));
+ $('iqr-detail').textContent=`검사 범위 ${fmt(b.low)}~${fmt(b.high)} · 확인 대상 ${flag.length}건 (${flag.map(r=>r.id).join(', ')})`;
+});
+$('recheck').addEventListener('click',()=>{if(S.phase!=='done')return;S.mult=S.previewMult;reset()});
+function openModal(initial=false){
+ show('mission-begin',initial);show('mission-resume',!initial);el.dialog.showModal();
+ (initial?$('mission-begin'):$('mission-resume')).focus();
+}
+$('mission-begin').addEventListener('click',()=>{el.dialog.close();S.hasSeenIntro=true;start()});
+$('mission-resume').addEventListener('click',()=>el.dialog.close());
+$('mission-help').addEventListener('click',()=>openModal(false));
+el.dialog.addEventListener('cancel',event=>{if(!S.hasSeenIntro)event.preventDefault()});
+Object.defineProperty(window,'__factoryTest',{value:{snapshot:()=>({phase:S.phase,index:S.index,history:S.history.map(r=>({id:r.id,raw:r.raw,source:r.source,output:r.output,choice:r.choice})),mult:S.mult,previewMult:S.previewMult,plotVisible:!el.panel.hidden,recapRows:[...document.querySelectorAll("#recap-list .recap-item")].map(x=>x.querySelector("h4")?.textContent),result:M.evaluate(S.decisions,S.mult)})}});
+setRuleSummary();textStatus('검사기 대기 중');progress();$('status-count').textContent='준비 / 12건';
+openModal(true);
+})();
+</script>
+<script id="rc1-native-dialog-focus">
+(() => { const dlg=document.getElementById('mission-dialog'); if(!dlg)return;
+  dlg.addEventListener('keydown',e=>{
+    if(e.key!=='Tab'||!dlg.open)return;
+    const focusable=[...dlg.querySelectorAll('button:not([hidden]):not([disabled])')].filter(x=>x.getClientRects().length);
+    if(!focusable.length)return;
+    const current=focusable.indexOf(document.activeElement);
+    const next=e.shiftKey?(current<=0?focusable[focusable.length-1]:focusable[current-1])
+      :(current<0||current===focusable.length-1?focusable[0]:focusable[current+1]);
+    e.preventDefault();next.focus({preventScroll:true});
+  });
+  dlg.addEventListener('close',()=>{
+    setTimeout(()=>{if(document.activeElement===document.body){const main=document.getElementById('main'); if(main){main.tabIndex=-1; main.focus({preventScroll:true})}}},200);
+  });})();
+</script>
+</body></html>

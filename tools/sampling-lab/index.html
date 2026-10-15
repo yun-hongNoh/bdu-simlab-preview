@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="ko">
+<head><meta name="robots" content="noindex,nofollow">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="description" content="표본의 크기와 반복횟수를 바꾸며 표본평균의 분포를 살펴보는 교육용 시뮬레이션" />
+<title>10-2 표본추출 실험실 | 컴퓨터공학과 웹 시뮬레이션</title>
+<style>
+:root {color-scheme:dark; --bg:#071321; --panel:#112638; --panel2:#142d40; --edge:#355065; --text:#f2f8fd; --muted:#bed4e1; --mint:#72e8d9; --sun:#ffd586; --violet:#b4a5ff; --warn:#ffcba0; --shadow:0 22px 80px #0006; }
+*, *::before, *::after {box-sizing:border-box}
+[hidden]{display:none!important}
+html {scroll-behavior:smooth}
+body {margin:0;min-width:290px; color:var(--text);background:radial-gradient(circle at 74% -13%,#194e64 0,transparent 44%),radial-gradient(circle at -8% 35%,#292a50 0,transparent 37%),var(--bg);font:16px/1.62 system-ui,-apple-system,"Malgun Gothic","Apple SD Gothic Neo",sans-serif;word-break:keep-all; overflow-wrap:break-word}
+button,select {font:inherit}
+button {cursor:pointer}
+button:disabled {cursor:wait;opacity:.57}
+a {color:inherit;text-decoration:none}
+a:hover {text-decoration:underline;text-underline-offset:4px}
+:focus-visible {outline:3px solid var(--sun);outline-offset:4px}
+.sr-only {position:absolute;overflow:hidden;clip:rect(0,0,0,0);height:1px;width:1px;margin:-1px;padding:0;border:0;white-space:nowrap}
+header {border-bottom:1px solid #273c4c}
+.nav-inner,.wrap,.footer-inner {max-width:1216px;padding-left:24px;padding-right:24px;margin:0 auto}
+.nav-inner {min-height:69px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand {font-size:.93rem;font-weight:750;color:#d8e9f2;display:flex;gap:10px;align-items:center}
+.brand-mark {width:32px;height:32px;border-radius:11px;display:grid;place-items:center;background:#1c5058;color:var(--mint)}
+.nav-tag {font-weight:750;font-size:.84rem;color:#a9dbd8;border:1px solid #386565;border-radius:99px;padding:5px 12px}
+.wrap {padding-top:31px;padding-bottom:65px}
+.hero {display:flex;align-items:flex-end;justify-content:space-between;gap:25px;padding-bottom:26px}
+.eyebrow {color:#8ee5df;font-weight:800;font-size:.8rem;letter-spacing:.05em;margin:0 0 9px}
+h1 {font-size:clamp(2rem,3.6vw,3.05rem);line-height:1.22;letter-spacing:-.042em;margin:0 0 10px;font-weight:830}
+.subheading {font-size:1.07rem;color:#cfdfeb;margin:0;max-width:680px}
+.progress {min-width:235px;display:grid;gap:8px;align-self:center}
+.progress-label {color:#e4eff5;font-size:.85rem;font-weight:750}
+.progress-track {height:9px;background:#2b3f53;border-radius:30px;overflow:hidden}
+.progress-fill {height:100%;width:0%;background:linear-gradient(90deg,#56cfc9,#8dcff1);border-radius:30px;transition:width .3s ease}
+.progress-note {font-size:.78rem;color:#c0d2df}
+.layout {display:grid;grid-template-columns:minmax(0,1.04fr) minmax(0,.96fr);gap:18px;align-items:start}
+.panel {background:linear-gradient(150deg,#122c3c,#0e2031);border:1px solid var(--edge);border-radius:22px;box-shadow:0 14px 45px #0002;min-width:0}
+.panel-head {padding:22px 24px 0;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.panel h2 {font-size:1.27rem;line-height:1.4;letter-spacing:-.02em;margin:0;font-weight:790}
+.mini-label {font-weight:750;font-size:.8rem;color:#bbd4df}
+.panel-sub {font-size:.88rem;color:#c4d8e2;margin:4px 24px 0}
+.machine {padding:14px 14px 0;min-height:280px}
+.machine-frame {border:1px solid #2d5060;border-radius:17px;background:radial-gradient(circle at 32% 30%,#20526755,transparent 54%),linear-gradient(158deg,#092130,#092033 63%,#0a1a27);overflow:hidden;position:relative}
+.machine-frame svg {width:100%;height:auto;display:block}
+.drum-glass {fill:#3aa2b5;fill-opacity:.12;stroke:#88e3dc;stroke-opacity:.55;stroke-width:3}
+.cloud-spin {transform-origin:0 0}
+.machine-frame.rolling .cloud-spin {animation:spin .9s linear infinite}
+.machine-frame.rolling .gears {animation:spin 1.3s linear infinite;transform-origin:0 0}
+.machine-frame.rolling .lamp {animation:blink .3s ease-in-out infinite alternate}
+.draw-chip {animation:drop-chip .72s cubic-bezier(.16,.7,.22,1) both}
+.machine-frame.quick .draw-chip {animation-duration:.24s}
+@keyframes spin {to{transform:rotate(360deg)}}
+@keyframes blink {to{opacity:.3}}
+@keyframes drop-chip {0%{transform:translate(-162px,-112px) scale(.55);opacity:0}26%{opacity:1}75%{transform:translate(0,6px) scale(1.04)}100%{transform:translate(0,0) scale(1);opacity:1}}
+.machine-caption {color:#c3d9e5;font-size:.82rem;padding:7px 8px 12px;display:flex;align-items:center;justify-content:space-between;gap:14px}
+.machine-caption span:last-child {font-variant-numeric:tabular-nums;color:#98d9d3;font-weight:750}
+.main-actions {padding:2px 24px 25px;display:grid;gap:12px}
+.buttons {display:flex;flex-wrap:wrap;gap:10px}
+.btn {min-height:50px;border-radius:13px;padding:10px 18px;border:1px solid #44647a;color:white;background:#244158;font-weight:750;line-height:1.3;display:inline-flex;align-items:center;justify-content:center;gap:9px}
+.btn:hover:not(:disabled) {filter:brightness(1.12)}
+.btn-primary {background:linear-gradient(135deg,#65e0d3,#83e1e9);color:#092533;border:0;box-shadow:0 8px 25px #28d5c320}
+.btn-secondary {border-color:#648494;background:#203e50;color:#edf9fb}
+.btn-ghost {background:transparent;color:#d4e7ef}
+#run-one,#run-many {flex:1 1 150px}
+.helper {font-size:.88rem;color:#c4d8e2;margin:0;min-height:25px}
+.step {border:1px solid #446277;border-radius:13px;padding:13px 14px;background:#173647;color:#f2fafb;font-size:.94rem}
+.step strong {color:#9ce9e4}
+.step .hint {font-size:.88rem;color:#cee1ec;display:block;margin-top:4px}
+.stage-tools {display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;background:#0c2432;border:1px solid #325164;padding:13px;border-radius:13px}
+.stage-tools p {margin:0;font-weight:760;font-size:.93rem}
+.segmented {display:flex;gap:4px;background:#122b40;padding:4px;border-radius:12px;border:1px solid #466779}
+.segmented button {color:#c8e2eb;border:0;background:transparent;padding:8px 13px;border-radius:9px;min-width:50px;min-height:40px;font-weight:750;font-size:.96rem}
+.segmented button[aria-pressed="true"] {background:#77d6ce;color:#08323b}
+.results {padding:13px 22px 24px}
+.hist-stage {border:1px solid #355a6c;border-radius:16px;background:linear-gradient(150deg,#0a1d2d,#0c2536);padding:10px 9px 2px;margin-top:5px}
+.hist-stage svg {display:block;width:100%;height:auto}
+.hist-desc {color:#cbdfea;font-size:.78rem;text-align:center;padding:2px 0 11px}
+.stat-strip {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-top:14px}
+.stat {padding:11px 10px;background:#173547;border:1px solid #35586b;border-radius:13px;min-width:0}
+.stat-label {font-size:.76rem;color:#c1d9e6;display:block;line-height:1.4}
+.stat strong {display:block;font-size:clamp(1.15rem,2.1vw,1.55rem);font-weight:800;line-height:1.25;margin-top:7px;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.stat .unit {font-size:.72em;font-weight:600;margin-left:2px}
+.focus-note {padding:13px 14px;border-radius:13px;background:#18354a;border:1px solid #3d6175;color:#e5f4fa;margin-top:12px;font-size:.89rem;line-height:1.55}
+.compare-wrap {margin-top:15px;padding-top:15px;border-top:1px solid #345166}
+.compare-wrap h3 {font-size:1rem;margin:0 0 9px}
+.compare-note {margin:0 0 12px;color:#c8dce7;font-size:.82rem}
+.compare-row {display:grid;grid-template-columns:70px 1fr 94px;gap:9px;align-items:center;margin:8px 0;font-size:.86rem}
+.compare-row .bar-track {background:#293f53;border-radius:99px;height:13px;overflow:hidden}
+.compare-row .bar-fill {height:100%;background:linear-gradient(90deg,#67d9ce,#a3a0fb);border-radius:99px}
+.compare-row span:last-child {text-align:right;font-variant-numeric:tabular-nums}
+.small-block {border:1px solid #355263;border-radius:19px;padding:20px 24px;background:#102638;margin-top:18px}
+.small-block h2 {font-size:1.2rem;margin:0 0 9px}
+.small-block p {margin:0 0 10px;color:#ccdee8}
+.question {border-left:3px solid #72dace;padding-left:13px;font-weight:750;color:#f3f9ff!important}
+.choice-grid {display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.choice {border-radius:12px;border:1px solid #416175;background:#203c50;padding:10px 14px;min-height:47px;color:#f1f7fb;text-align:left;flex:1 1 155px;font-weight:740}
+.choice:hover {background:#2b5064}
+#quiz-feedback {font-size:.91rem;color:#dbedf5;padding:12px;border-radius:11px;background:#224153}
+.advanced {margin-top:16px;border:1px solid #426173;background:#112a3a;border-radius:15px;padding:14px 18px}
+.advanced summary {font-weight:790;cursor:pointer;list-style:none;position:relative;padding-right:22px}
+.advanced summary::after {content:'⌄';position:absolute;right:2px;color:var(--mint)}
+.advanced[open] summary::after{content:'⌃'}
+.advanced p {color:#cbdfea;margin:12px 0 10px;font-size:.9rem}
+.advanced label {display:block;font-weight:740;font-size:.92rem;margin:10px 0 7px}
+select {width:100%;min-height:49px;border:1px solid #567587;border-radius:11px;background:#193647;color:#f3fbfe;padding:9px 12px;font-size:1rem}
+.note-list {margin:12px 0 0;padding-left:21px;color:#cadde7;font-size:.89rem}
+.note-list li {margin:4px 0}
+.footer-inner {border-top:1px solid #304556;color:#b3cbd9;padding-top:21px;padding-bottom:24px;font-size:.82rem}
+.overlay {position:fixed;inset:0;z-index:12;background:#020a12db;display:grid;place-items:center;padding:17px;overflow-y:auto}
+.dialog {width:min(520px,100%);max-height:calc(100dvh - 34px);overflow-y:auto;border-radius:24px;border:1px solid #588795;background:linear-gradient(160deg,#153c4b,#102536 74%);box-shadow:var(--shadow);padding:30px}
+.dialog-eyebrow {font-weight:800;font-size:.83rem;color:var(--mint);margin:0 0 10px}
+.dialog h2 {font-size:clamp(1.43rem,3vw,1.9rem);line-height:1.35;margin:0 0 15px;letter-spacing:-.03em}
+.dialog p {color:#e0edf3;margin:0 0 13px}
+.dialog .story {background:#102839;border:1px solid #3b6777;padding:16px;border-radius:13px;margin:16px 0 19px}
+.dialog .story strong {color:#a4ece7}
+.dialog .btn {width:100%;min-height:54px}
+.dialog .skip {margin-top:11px;border:0;background:transparent;color:#cbdde6;min-height:40px;width:100%}
+.note-under {font-size:.81rem;color:#bacfda}
+#toast {position:fixed;bottom:22px;left:50%;transform:translateX(-50%);max-width:min(560px,calc(100vw - 30px));z-index:15;border:1px solid #74c9c1;background:#123b49;color:white;border-radius:14px;padding:13px 19px;box-shadow:var(--shadow);font-size:.92rem}
+@media(max-width:970px){.layout {grid-template-columns:1fr}.progress {min-width:200px}.machine {max-width:740px;width:100%;margin:0 auto}.panel-head{padding-top:19px}}
+@media(max-width:660px){.nav-inner,.wrap,.footer-inner{padding-left:16px;padding-right:16px}.nav-inner{min-height:62px}.brand{font-size:.82rem;gap:7px}.brand-mark{width:28px;height:28px}.nav-tag{font-size:.73rem;padding:4px 8px}.wrap{padding-top:23px}.hero{display:block}.hero h1{font-size:2.05rem}.subheading{font-size:.98rem}.progress{margin-top:18px;min-width:0}.layout{gap:13px}.panel{border-radius:16px}.panel-head{padding:17px 17px 0}.panel h2{font-size:1.16rem}.panel-sub{margin-left:17px;margin-right:17px}.machine{padding:12px 10px 0;min-height:0}.main-actions{padding:5px 16px 17px}.machine-caption{padding:4px 6px 10px;font-size:.74rem}.results{padding:9px 13px 18px}.hist-stage{padding:6px 3px 0}.stat-strip{gap:6px}.stat{padding:9px 7px}.stat-label{font-size:.71rem}.stat strong{font-size:1.17rem}.stage-tools{padding:11px}.segmented button{padding:7px 9px}.small-block{padding:18px 16px}.dialog{padding:22px 19px}.compare-row{grid-template-columns:61px 1fr 79px;gap:6px}.btn{font-size:.95rem}.note-list{font-size:.87rem}}
+@media(max-width:355px){.machine-caption{display:block}.machine-caption span:last-child{display:block;margin-top:4px}.stat strong{font-size:1.05rem}.brand{font-size:.76rem}.nav-tag{display:none}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.cloud-spin,.machine-frame.rolling .cloud-spin,.machine-frame.rolling .gears,.machine-frame.rolling .lamp,.draw-chip{animation:none!important}.progress-fill{transition:none!important}}
+
+/* v1.3 D1: the benchmark is only visible after learners have sampled. */
+.prediction-strip{padding:13px 15px;border:1px solid #3f6b7d;background:#102d3f;border-radius:14px;margin-bottom:12px}
+.prediction-strip strong{display:block;font-size:.94rem;margin-bottom:6px;color:#e7f7f9}
+.prediction-strip p{margin:0 0 10px;font-size:.88rem;color:#cadee8}
+.prediction-choices{display:flex;gap:8px;flex-wrap:wrap}
+.prediction-choices button{border:1px solid #567e90;background:#214b5f;color:#effaff;border-radius:11px;min-height:42px;font-weight:750;padding:8px 12px}
+.prediction-choices button[aria-pressed=true]{background:#a1eadd;color:#0a3440;border-color:#a1eadd}
+.prediction-status{font-size:.83rem!important;margin:9px 0 0!important;color:#bce9dd!important}
+.reveal-box{margin-top:13px;padding:15px 17px;background:#2c3e4c;border:1px solid #e1c68d;border-radius:14px}
+.reveal-box h3{font-size:1rem;margin:0 0 7px;color:#ffe5ac}
+.reveal-box p{margin:0 0 11px;color:#e1ebee;font-size:.9rem}
+.reveal-box .btn{width:100%}
+.truth-outcome{margin-top:14px;padding:15px;border-radius:14px;border:1px solid #c3a363;background:linear-gradient(135deg,#3b403f,#243b48)}
+.truth-outcome strong{display:block;color:#ffe4aa;font-size:1.03rem;margin-bottom:6px}
+.truth-outcome p{margin:0;color:#f1f5f1;font-size:.9rem;line-height:1.65}
+@media(max-width:660px){.prediction-strip,.reveal-box,.truth-outcome{padding:13px}}
+/* RC1: important supporting labels remain readable on narrow phones */
+.nav-tag,.progress-note,.stat-label{font-size:13px}
+
+/* D5: course navigation and mobile legibility, no model changes. */
+.course-return{margin:0 0 14px;font-size:14px;font-weight:750;line-height:1.55}
+.course-return a{color:#bfeae6;display:inline-flex;align-items:center;min-height:38px;padding:5px 0;text-decoration:underline;text-underline-offset:4px}
+@media(max-width:660px){.machine-caption{font-size:.85rem;line-height:1.55}.stat-label{font-size:.8rem}}
+</style>
+</head>
+<body>
+<header><div class="nav-inner"><a class="brand" href="../../index.html"><span class="brand-mark" aria-hidden="true">◈</span>컴퓨터공학과 시뮬레이션 실험실</a><span class="nav-tag">10주 2강 · 통계</span></div></header>
+<main class="wrap" id="lab-main">
+<nav class="course-return" aria-label="교과목 도구 목록으로 돌아가기"><a href="../../courses/bigdata-planning-analysis/index.html">← 빅데이터 기획 및 분석 · 도구 목록</a></nav>
+<section class="hero"><div><p class="eyebrow">표본추출 · 표본평균의 분포</p><h1>표본추출 실험실</h1><p class="subheading">작은 표본으로 전체의 평균을 추정하면, 결과가 매번 같을까요?</p></div><div class="progress" aria-label="미션 진행 상황"><span class="progress-label" id="progress-label">실험 1 / 3 · 첫 표본 뽑기</span><div class="progress-track"><div id="progress-fill" class="progress-fill"></div></div><span class="progress-note" id="progress-note">먼저 10건을 직접 뽑아 보세요.</span></div></section>
+<div class="layout">
+<section class="panel" aria-labelledby="machine-title">
+  <div class="panel-head"><h2 id="machine-title">① 움직이는 추첨 기계</h2><span class="mini-label">전체 가상 기록 600건</span></div>
+  <p class="panel-sub">가상의 카페 대기시간 기록에서 무작위로 표본을 뽑습니다.</p>
+  <div class="machine"><div class="machine-frame" id="machine-frame">
+    <svg viewBox="0 0 620 334" aria-label="원형 추첨기에서 대기시간을 나타내는 구슬이 뽑혀 오른쪽 수집함으로 이동하는 애니메이션" role="img">
+    <defs>
+      <linearGradient id="base-gradient" x1="0" x2="1"><stop stop-color="#285b68"/><stop offset="1" stop-color="#173746"/></linearGradient>
+      <linearGradient id="tray-gradient" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#256579"/><stop offset="1" stop-color="#173c4d"/></linearGradient>
+    </defs>
+    <path d="M52 280 H570" stroke="#17455a" stroke-width="20" stroke-linecap="round" />
+    <rect x="62" y="276" width="490" height="30" rx="12" fill="#184052" stroke="#38788b" stroke-width="2" />
+    <path d="M98 264 L115 235 L278 235 L295 264" fill="#19445a" stroke="#58acb2" stroke-opacity=".8" stroke-width="2" />
+    <circle class="drum-glass" cx="196" cy="151" r="106"/><circle cx="196" cy="151" r="91" stroke="#4bb2bd" stroke-opacity=".16" stroke-width="2" fill="none"/>
+    <g transform="translate(196 151)"><g id="population-dots" class="cloud-spin"></g></g>
+    <g transform="translate(196 151)"><g class="gears"><circle r="25" fill="#18505f" stroke="#9beddf" stroke-width="2"/><circle r="8" fill="#a0e5dd"/><path d="M0 -24 V-32 M24 0 H32 M0 24 V32 M-24 0 H-32" stroke="#91e2d9" stroke-width="5" stroke-linecap="round"/></g></g>
+    <path d="M294 175 C328 177 332 213 368 227" stroke="#2e7f93" fill="none" stroke-width="27" stroke-linecap="round"/>
+    <path d="M294 175 C328 177 332 213 368 227" stroke="#98ebe2" fill="none" stroke-opacity=".7" stroke-width="3" stroke-linecap="round"/>
+    <path d="M353 240 V276 H562 V237" fill="url(#tray-gradient)" stroke="#71dcd3" stroke-width="2" stroke-linejoin="round"/>
+    <path d="M365 250 H550" stroke="#74b6c1" stroke-width="2" stroke-dasharray="7 6"/>
+    <g id="sample-drops"></g>
+    <rect x="354" y="279" width="208" height="30" rx="9" fill="#204c5d" stroke="#468d97"/><text x="458" y="299" font-family="sans-serif" font-size="13" font-weight="700" text-anchor="middle" fill="#d8f1f1">표본 수집함</text>
+    <circle class="lamp" cx="322" cy="69" r="7" fill="#75e3d4"/><text x="340" y="73" font-family="sans-serif" font-size="14" fill="#b9dfde">무작위 추출</text>
+    <text x="196" y="25" font-family="sans-serif" font-size="14" font-weight="700" text-anchor="middle" fill="#b5d6df">모집단 · 600건</text>
+    </svg>
+  </div><div class="machine-caption"><span>구슬은 기록을 상징합니다. 뽑힌 값 3개를 예로 보여줍니다.</span><span id="last-sample">아직 추출 전</span></div></div>
+  <div class="main-actions">
+    <div id="prediction-strip" class="prediction-strip">
+      <strong>실험 전에 잠깐 예상해 볼까요?</strong>
+      <p>같은 크기로 10건을 다시 뽑으면 표본평균도 같을까요? 예상은 선택 사항입니다.</p>
+      <div class="prediction-choices" role="group" aria-label="표본평균 예측 선택"><button type="button" data-prediction="same" aria-pressed="false">같을 것 같아요</button><button type="button" data-prediction="different" aria-pressed="false">달라질 것 같아요</button></div>
+      <p id="prediction-status" class="prediction-status" role="status" aria-live="polite" hidden></p>
+    </div>
+    <div id="size-tools" class="stage-tools" hidden><p>한 번에 몇 건을 뽑을까요?</p><div class="segmented" role="group" aria-label="표본 크기 선택"><button data-size="10" aria-pressed="true">10건</button><button data-size="30" aria-pressed="false">30건</button><button data-size="100" aria-pressed="false">100건</button></div></div>
+    <div class="buttons"><button type="button" class="btn btn-primary" id="run-one">● 한 번 뽑아 보기</button><button type="button" class="btn btn-secondary" id="run-many" hidden>⟳ 50번 반복하기</button></div>
+    <div id="step-explain" class="step"><strong>첫 실험</strong><span class="hint">10건을 무작위로 뽑으면 그 10건의 평균이 계산됩니다.</span></div>
+    <p class="helper" id="action-status" role="status" aria-live="polite">준비되었습니다. ‘한 번 뽑아 보기’를 눌러 주세요.</p>
+    <section class="reveal-box" id="reveal-box" hidden aria-labelledby="reveal-heading">
+      <h3 id="reveal-heading">이제 전체 평균을 확인할 차례입니다</h3>
+      <p>10건씩 여러 번 추출한 평균들이 어떻게 모였나요? 가상 전체 600건의 실제 평균과 비교해 보세요.</p>
+      <button type="button" class="btn btn-primary" id="reveal-btn">🔎 전체 평균 공개하고 비교하기</button>
+    </section>
+  </div>
+</section>
+<section class="panel" aria-labelledby="hist-title">
+  <div class="panel-head"><h2 id="hist-title">② 표본평균이 쌓이는 곳</h2><span class="mini-label" id="hist-badge">표본 10건씩</span></div>
+  <p class="panel-sub">같은 크기의 표본을 반복해서 뽑을 때마다 평균을 하나씩 기록합니다.</p>
+  <div class="results">
+    <div class="hist-stage"><svg id="histogram" viewBox="0 0 640 280" role="img" aria-label="추출을 반복할 때마다 나타나는 표본평균의 히스토그램"></svg><div class="hist-desc">가로축: 표본평균(분) · 세로축: 해당 구간의 반복횟수</div></div>
+    <div class="stat-strip"><div class="stat"><span class="stat-label">이번 표본의 평균</span><strong id="stat-latest">—</strong></div><div class="stat"><span class="stat-label">반복 실험</span><strong id="stat-count">0<span class="unit">회</span></strong></div><div class="stat"><span class="stat-label">평균의 흔들림</span><strong id="stat-spread">—</strong></div></div>
+    <div class="focus-note" id="main-insight">표본을 한 번 뽑으면 평균이 하나 생깁니다. 여러 번 반복하면 평균들이 얼마나 흩어지는지 볼 수 있습니다.</div>
+    <div class="truth-outcome" id="truth-outcome" role="status" aria-live="polite" hidden>
+      <strong id="truth-number">전체 평균</strong>
+      <p id="truth-explanation">표본평균들과 전체 평균을 비교해 보세요.</p>
+    </div>
+    <div class="compare-wrap" id="compare-wrap" hidden><h3>표본크기별 흔들림 비교</h3><p class="compare-note">같은 모집단에서 반복한 표본평균의 표준편차입니다. 두 번 이상 추출하면 표시됩니다.</p><div id="compare-bars"></div></div>
+  </div>
+</section>
+</div>
+<section class="small-block" id="question-card" aria-labelledby="question-title">
+  <h2 id="question-title">③ 한 번 더 생각!</h2>
+  <p class="question">같은 모집단에서 표본을 10건에서 100건으로 늘리면, 여러 번 구한 표본평균의 흔들림은 보통 어떻게 될까요?</p>
+  <div class="choice-grid" role="group" aria-label="학습 확인 정답 선택"><button class="choice" data-answer="larger">더 커진다</button><button class="choice" data-answer="smaller">더 작아진다</button><button class="choice" data-answer="equal">항상 완전히 같다</button></div>
+  <div id="quiz-feedback" role="status" aria-live="polite" hidden></div>
+</section>
+<details class="advanced" id="advanced" hidden><summary>심화 탐구 · 모집단 모양 바꾸기와 계산 원리</summary>
+  <label for="population-kind">가상의 모집단 분포</label>
+  <select id="population-kind"><option value="skewed">긴 대기시간이 드문 분포 (기본)</option><option value="normal">가운데 값이 많은 분포</option><option value="bimodal">두 그룹이 섞인 분포</option></select>
+  <p>모집단 모양을 바꾸면 이전 반복 결과는 초기화됩니다. 새 데이터에서 다시 실험해 보세요.</p>
+  <ul class="note-list"><li>모든 표본은 같은 가상의 모집단 600건에서 <strong>복원추출</strong>합니다. 따라서 같은 기록을 여러 번 뽑을 수 있습니다.</li><li>표본평균 = 뽑은 n개 값의 합 ÷ n. 가로축에는 매회 얻은 표본평균을 기록합니다.</li><li>표본평균의 이론적 표준오차는 모집단 표준편차를 σ라 할 때 σ / √n입니다. 표본크기 n을 늘리면 보통 줄어듭니다.</li><li>그림의 움직이는 구슬은 추출을 설명하기 위한 시각적 표현이며 실제 데이터를 물리적으로 떨어뜨려 표본추출하는 것은 아닙니다.</li><li>표본평균의 분포는 조건이 충족되고 표본크기가 충분할 때 정규분포에 가까워지는 경향이 있습니다. 모든 분포·모든 표본크기에 완벽한 종 모양이 보장되는 것은 아닙니다.</li></ul>
+  <button type="button" class="btn btn-ghost" id="reset-lab" style="margin-top:12px">↻ 처음부터 다시 실험하기</button>
+</details>
+<p class="note-under" style="margin:16px 0 0">가상 데이터 기반 학습용 실험입니다. 실제 카페의 조사 결과·통계조사 정확도·학생 성적을 나타내지 않습니다. 정규 강의의 보충 학습입니다.</p>
+</main>
+<div class="footer-inner">컴퓨터공학과 웹 시뮬레이션 학습도구 · 10주 2강 · 가상 데이터 학습활동 · 정규 성적과 별도</div>
+<div class="overlay" id="intro-overlay"><div class="dialog" role="dialog" aria-modal="true" aria-labelledby="dialog-title" aria-describedby="dialog-desc"><p class="dialog-eyebrow">10주 2강 · 오늘의 미션</p><h2 id="dialog-title">카페 손님들의 평균 대기시간을 알아볼까요?</h2><p id="dialog-desc">가상 카페에는 대기시간 기록이 <strong>600건</strong> 있습니다. 하지만 모든 기록을 읽지 않고 일부만 뽑아서 전체 평균을 짐작하려고 합니다.</p><div class="story"><strong>오늘 해볼 일</strong><p style="margin:6px 0 0">먼저 10건을 뽑아 평균을 계산해 보고, 같은 실험을 여러 번 반복해 보세요. 표본을 더 많이 뽑으면 무엇이 달라질까요?</p></div><button class="btn btn-primary" id="start-btn">첫 표본 10건 뽑기 →</button><button class="skip" id="look-btn">먼저 화면 살펴보기</button></div></div>
+<div id="toast" role="status" aria-live="polite" hidden></div>
+<script>
+'use strict';
+/*CORE_BEGIN*/
+function mulberry32(seed) { let a=seed>>>0; return function(){a=(a+0x6D2B79F5)>>>0;let t=Math.imul(a^(a>>>15),1|a);t^=t+Math.imul(t^(t>>>7),61|t);return ((t^(t>>>14))>>>0)/4294967296;}; }
+function mean(values){return values.reduce((a,b)=>a+b,0)/values.length;}
+function stdev(values, sample=false){if(values.length<2&&sample)return null;const m=mean(values);return Math.sqrt(values.reduce((a,b)=>a+(b-m)**2,0)/(values.length-(sample?1:0)));}
+function normalRandom(rng){const u=Math.max(1e-12,rng()),v=rng();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
+function buildPopulation(kind){const rng=mulberry32(kind==='skewed'?100901:kind==='normal'?100902:100903);const list=[];for(let i=0;i<600;i++){let x;if(kind==='normal')x=12+3.3*normalRandom(rng);else if(kind==='bimodal')x=(rng()<.62?7+1.9*normalRandom(rng):20+2.9*normalRandom(rng));else x=2.8-5.7*Math.log(Math.max(1e-10,rng()));list.push(Math.round(Math.max(1,Math.min(52,x))*10)/10);}return list;}
+function drawOne(population,size,rng){const picked=[];for(let i=0;i<size;i++)picked.push(population[Math.floor(rng()*population.length)]);return {picked,mean:mean(picked)};}
+function getBounds(population){const m=mean(population),sd=stdev(population);const half=Math.max(2,5*sd/Math.sqrt(10));return {m,sd,min:Math.max(0,m-half),max:m+half};}
+function histogramCounts(values,min,max,bins=24){const result=Array(bins).fill(0);for(const x of values){const i=Math.max(0,Math.min(bins-1,Math.floor((x-min)/(max-min)*bins)));result[i]++;}return result;}
+/*CORE_END*/
+const $=id=>document.getElementById(id);
+const reducedMotion=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const SIZES=[10,30,100];
+const state={kind:'skewed',population:buildPopulation('skewed'),size:10,means:{10:[],30:[],100:[]},rng:mulberry32(200926),ready:false,busy:false,current:null,runIndex:0,truthRevealed:false,prediction:null};
+const intro=$('intro-overlay'),machine=$('machine-frame'),hist=$('histogram');
+const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+function pretty(x,digits=1){return Number(x).toLocaleString('ko-KR',{maximumFractionDigits:digits,minimumFractionDigits:digits});}
+function seedDots(){const rng=mulberry32(329819);const dots=[];for(let i=0;i<58;i++){const a=rng()*Math.PI*2,r=18+Math.sqrt(rng())*67;const colors=['#a1e9dc','#8bd0ef','#fbd18f','#b6b1ed'];dots.push(`<circle cx="${(Math.cos(a)*r).toFixed(1)}" cy="${(Math.sin(a)*r).toFixed(1)}" r="${(4+rng()*3).toFixed(1)}" fill="${colors[i%colors.length]}" fill-opacity=".89"/>`);} $('population-dots').innerHTML=dots.join('');}
+function showPicked(picked,fast){const colors=['#80ddd0','#a7c6f8','#fbd68e'];$('sample-drops').innerHTML=picked.slice(0,3).map((v,i)=>`<g transform="translate(${399+i*54} ${254-i%2*6})"><g class="draw-chip" style="animation-delay:${fast?i*38:i*90}ms"><circle cx="0" cy="0" r="21" fill="${colors[i]}" stroke="#ebffff" stroke-opacity=".65" stroke-width="1.5"/><text text-anchor="middle" x="0" y="5" font-family="sans-serif" font-size="12.5" font-weight="750" fill="#0d2c3b">${Math.round(v)}</text></g></g>`).join('');}
+function renderHistogram(){
+  const rows=state.means[state.size],bounds=getBounds(state.population);
+  // Stable rounded domain across sample sizes. Before reveal, tick marks do not numerically disclose the exact population mean.
+  const m=bounds.m,min=Math.max(0,Math.floor(bounds.min/2)*2),max=Math.ceil(bounds.max/2)*2;
+  const compact=window.innerWidth<=600;
+  const vw=compact?360:640, vh=compact?238:280;
+  const bins=compact?18:24;
+  const counts=histogramCounts(rows,min,max,bins),most=Math.max(1,...counts);
+  const LEFT=compact?35:48,TOP=compact?32:19,W=compact?296:558,H=compact?155:186,y0=TOP+H;
+  hist.setAttribute('viewBox',`0 0 ${vw} ${vh}`);
+  let parts=[`<defs><linearGradient id="barGradient" x1="0" x2="1"><stop stop-color="#5bdace"/><stop offset="1" stop-color="#93bffa"/></linearGradient></defs>`];
+  const tickSteps=compact?2:4;
+  for(let i=0;i<=tickSteps;i++){
+    const x=LEFT+W*i/tickSteps;
+    parts.push(`<line x1="${x}" y1="${TOP}" x2="${x}" y2="${y0}" stroke="#62839a" stroke-opacity=".18"/>`);
+    parts.push(`<text x="${x}" y="${y0+25}" fill="#c3d6e2" font-size="${compact?14:13}" text-anchor="middle">${(min+(max-min)*i/tickSteps).toFixed(1)}</text>`);
+  }
+  for(let i=0;i<4;i++){
+    const y=TOP+(H*i/3);
+    parts.push(`<line x1="${LEFT}" x2="${LEFT+W}" y1="${y}" y2="${y}" stroke="#7190a6" stroke-opacity=".25"/>`);
+    if(i===0||i===3||(!compact&&i===2)){
+      parts.push(`<text x="${LEFT-8}" y="${y+4}" fill="#bcd3e0" font-size="${compact?12:12}" text-anchor="end">${Math.round(most*(3-i)/3)}</text>`);
+    }
+  }
+  const barW=W/bins;
+  counts.forEach((c,i)=>{
+    if(!c)return;
+    const bh=c/most*(H-6),x=LEFT+i*barW+1,y=y0-bh;
+    parts.push(`<rect x="${x.toFixed(2)}" y="${y.toFixed(2)}" width="${(barW-2).toFixed(2)}" height="${bh.toFixed(2)}" rx="2" fill="url(#barGradient)" opacity=".92"/>`);
+  });
+  const mx=LEFT+W*(m-min)/(max-min);
+  const labelW=compact?142:170;
+  const center=Math.max(LEFT+labelW/2,Math.min(LEFT+W-labelW/2,mx));
+  // Never reveal the true population mean through visible marks before students draw repeatedly.
+  if(state.truthRevealed){
+    parts.push(`<line x1="${mx}" y1="${TOP-3}" x2="${mx}" y2="${y0+4}" stroke="#ffd28a" stroke-width="2.4" stroke-dasharray="6 5"/>`);
+    parts.push(`<rect x="${center-labelW/2}" y="${compact?2:0}" width="${labelW}" height="${compact?26:25}" rx="7" fill="#594a3d"/>`);
+    parts.push(`<text x="${center}" y="${compact?20:17}" fill="#fff0c9" font-size="${compact?14:12.5}" text-anchor="middle" font-weight="700">전체 평균 ${pretty(m)}분</text>`);
+  }
+  if(!rows.length){
+    parts.push(`<text x="${LEFT+W/2}" y="${TOP+H/2-7}" text-anchor="middle" fill="#ddebf4" font-size="${compact?17:19}" font-weight="750">아직 표본평균이 없습니다</text>`);
+    parts.push(`<text x="${LEFT+W/2}" y="${TOP+H/2+19}" text-anchor="middle" fill="#bcd2df" font-size="14">추첨기를 작동해 보세요</text>`);
+  }else if(rows.length<3 && !compact){
+    parts.push(`<text x="${LEFT+W/2}" y="${y0+51}" text-anchor="middle" fill="#a9c2d0" font-size="12">여러 번 반복해야 분포의 모양을 볼 수 있습니다</text>`);
+  }
+  hist.innerHTML=parts.join('');
+  const sd=rows.length>1?stdev(rows,true):null;
+  hist.setAttribute('aria-label',`표본 ${state.size}건씩 ${rows.length}번 뽑은 표본평균 분포. ${state.truthRevealed?`모집단 실제 평균 ${pretty(m)}분.`:'모집단 실제 평균은 아직 공개되지 않았습니다.'} ${sd===null?'아직 표본평균의 변동성 계산 불가':`표본평균의 표준편차 ${pretty(sd,2)}분`}`);
+  $('stat-latest').innerHTML=rows.length?`${pretty(rows[rows.length-1])}<span class="unit">분</span>`:'—';
+  $('stat-count').innerHTML=`${rows.length}<span class="unit">회</span>`;
+  $('stat-spread').innerHTML=sd===null?'—':`${pretty(sd,2)}<span class="unit">분</span>`;
+  $('hist-badge').textContent=`표본 ${state.size}건씩`;
+  if(!rows.length){$('main-insight').textContent=`${state.size}건을 반복 추출하면 결과가 여기에 쌓입니다. 다른 표본크기로 바꿔도 이전 기록은 보존됩니다.`;}
+  else if(rows.length===1){$('main-insight').textContent=`한 번 뽑은 평균은 ${pretty(rows[0])}분입니다. 하지만 이 한 번의 결과만으로 전체를 정확히 안다고 할 수는 없습니다.`;}
+  else{$('main-insight').textContent=`${state.size}건씩 ${rows.length}번 뽑은 결과입니다. 표본평균들의 퍼짐 정도를 다른 표본크기와 비교해 보세요.`;}
+  renderCompare();renderProgress();
+}
+function renderCompare(){const html=SIZES.map(n=>{const arr=state.means[n],dev=arr.length>=2?stdev(arr,true):null,bar=dev===null?0:Math.min(100,dev/(getBounds(state.population).sd/Math.sqrt(10))*85);return `<div class="compare-row"><strong>${n}건</strong><div class="bar-track"><div class="bar-fill" style="width:${bar.toFixed(1)}%"></div></div><span>${dev===null?'반복 필요':`${pretty(dev,2)}분`}</span></div>`;}).join('');$('compare-bars').innerHTML=html;}
+function renderProgress(){
+ const a=state.means[10].length,b=state.means[100].length;
+ const step=a===0?0:!state.truthRevealed?(a<50?1:2):(b<30?3:4);
+ const labels=['실험 1 / 4 · 첫 표본','실험 2 / 4 · 반복 추출','실험 3 / 4 · 전체 평균 공개','실험 4 / 4 · 표본크기 비교','실험 완료 · 결과 설명'];
+ const guide=['먼저 10건을 뽑아 보세요.','50회 정도 반복해서 표본평균들이 모이는 모습을 관찰하세요.','참평균을 공개하고 추정 결과와 비교하세요.','100건을 선택해 반복하면 어떻게 달라지는지 확인하세요.','표본의 크기와 흔들림의 관계를 설명해 보세요.'];
+ $('progress-label').textContent=labels[step];$('progress-fill').style.width=(step*25)+'%';$('progress-note').textContent=guide[step];
+}
+function setSize(n){if(state.busy||!state.truthRevealed)return;state.size=n;document.querySelectorAll('[data-size]').forEach(b=>b.setAttribute('aria-pressed',String(Number(b.dataset.size)===n)));renderHistogram();$('action-status').textContent=`한 번에 ${n}건을 뽑습니다. 이전에 뽑은 결과는 다른 표본크기 기록에 남아 있습니다.`;}
+function unlock(){
+ if(state.ready)return;
+ state.ready=true;
+ $('run-many').hidden=false;
+ $('step-explain').innerHTML='<strong>이제 반복해 보세요</strong><span class="hint">표본을 50번 더 뽑아 평균들이 얼마나 달라지는지 확인하세요. 그 뒤 전체 평균을 공개할 수 있습니다.</span>';
+}
+function syncReveal(){
+ if(state.means[10].length>=50&&!state.truthRevealed){$('reveal-box').hidden=false;}
+ if(state.truthRevealed){
+   $('reveal-box').hidden=true;$('size-tools').hidden=false;$('advanced').hidden=false;$('compare-wrap').hidden=false;
+ }
+}
+function revealTruth(){
+ if(state.truthRevealed||state.busy||state.means[10].length<50)return;
+ state.truthRevealed=true;
+ const populationMean=mean(state.population);
+ const predicted=state.prediction===null?'예상을 선택하지 않았더라도':`처음에 ‘${state.prediction==='different'?'달라질 것이다':'같을 것이다'}’라고 예상했습니다.`;
+ $('truth-number').textContent=`가상 전체 600건의 실제 평균: ${pretty(populationMean)}분`;
+ $('truth-explanation').textContent=`${predicted} 이제 추출을 반복한 표본평균들이 이 값을 중심으로 어떻게 모이는지 살펴보세요. 한 번의 표본이 항상 참평균에 더 가깝다는 뜻은 아닙니다.`;
+ $('truth-outcome').hidden=false;$('prediction-strip').hidden=true;syncReveal();renderHistogram();
+ $('step-explain').innerHTML='<strong>다음 실험</strong><span class="hint">표본크기를 100건으로 바꾸어 50회 반복하고, 10건일 때와 분포의 너비를 비교하세요.</span>';
+ $('action-status').textContent='전체 평균을 확인했습니다. 표본크기를 바꿔 다시 실험해 보세요.';
+ $('truth-outcome').scrollIntoView({block:'nearest',behavior:reducedMotion?'auto':'smooth'});
+}
+function setBusy(flag){state.busy=flag;[...document.querySelectorAll('button[data-size]'),$('run-one'),$('run-many'),$('reveal-btn'),$('reset-lab'),$('start-btn')].forEach(b=>{if(b)b.disabled=flag});machine.classList.toggle('rolling',flag);}
+let toastTimer=null;
+function setToast(message){clearTimeout(toastTimer);$('toast').textContent=message;$('toast').hidden=false;toastTimer=setTimeout(hideToast,3800);}
+function hideToast(){clearTimeout(toastTimer);$('toast').hidden=true;}
+async function runTrials(count){
+ if(state.busy)return;
+ hideToast();setBusy(true);machine.classList.toggle('quick',count>1);
+ let last=null;
+ for(let i=0;i<count;i++){
+   const trial=drawOne(state.population,state.size,state.rng);
+   last=trial;
+   showPicked(trial.picked,count>1);
+   if(count===1){
+     $('action-status').textContent='구슬이 수집함으로 움직이는 동안 표본을 추출하고 있습니다.';
+     await delay(reducedMotion?40:780);
+   }else{
+     if(i%5===0)$('action-status').textContent=`${state.size}건씩 반복 추출하는 중 · ${i+1} / ${count}회`;
+     await delay(reducedMotion?0:27);
+   }
+   state.means[state.size].push(trial.mean);
+   state.runIndex++;
+   if(i===0||i===count-1||i%4===0)renderHistogram();
+ }
+ $('last-sample').textContent=last?`이번 평균 ${pretty(last.mean)}분`:'아직 추출 전';
+ setBusy(false);machine.classList.remove('quick');unlock();syncReveal();renderHistogram();
+ $('action-status').textContent=`완료! ${state.size}건짜리 표본평균이 총 ${state.means[state.size].length}개 쌓였습니다.`;
+ if(state.means[10].length>=30&&state.means[100].length>=30){setToast('두 표본크기의 결과가 쌓였습니다. 아래에서 흔들림을 비교해 보세요.');}
+ else if(state.means[10].length>=50&&!state.truthRevealed){$('action-status').textContent='반복 추출이 끝났습니다. 이제 아래 버튼으로 전체 평균을 공개해 보세요.';}
+ else if(state.truthRevealed&&state.means[10].length>=30&&state.means[100].length===0){setToast('100건으로 표본크기를 바꿔 반복해 보세요.');}
+}
+function closeIntro(start=false){intro.hidden=true;$('lab-main').inert=false;document.querySelector('header').inert=false;document.body.style.overflow='';$('run-one').focus();if(start)runTrials(1);}
+function resetLab(kind=state.kind){
+ if(state.busy)return;
+ state.kind=kind;state.population=buildPopulation(kind);state.means={10:[],30:[],100:[]};state.size=10;
+ state.truthRevealed=false;state.prediction=null;state.ready=false;
+ state.rng=mulberry32(200926+ ++state.runIndex*31);
+ $('sample-drops').innerHTML='';$('last-sample').textContent='아직 추출 전';$('population-kind').value=kind;
+ document.querySelectorAll('[data-size]').forEach(b=>b.setAttribute('aria-pressed',String(Number(b.dataset.size)===10)));
+ document.querySelectorAll('[data-prediction]').forEach(b=>b.setAttribute('aria-pressed','false'));
+ $('prediction-strip').hidden=false;$('prediction-status').hidden=true;$('reveal-box').hidden=true;$('truth-outcome').hidden=true;
+ $('size-tools').hidden=true;$('advanced').hidden=true;$('compare-wrap').hidden=true;$('run-many').hidden=true;
+ $('step-explain').innerHTML='<strong>첫 실험</strong><span class="hint">10건을 무작위로 뽑아 표본평균을 확인해 보세요.</span>';
+ renderHistogram();$('quiz-feedback').hidden=true;
+ $('action-status').textContent='새 모집단을 선택했습니다. 전체 평균은 아직 숨겨져 있습니다.';hideToast();
+}
+function start(){seedDots();renderHistogram();window.addEventListener('resize',renderHistogram);$('start-btn').addEventListener('click',()=>closeIntro(true));$('look-btn').addEventListener('click',()=>closeIntro(false));$('run-one').addEventListener('click',()=>runTrials(1));$('run-many').addEventListener('click',()=>runTrials(50));$('reveal-btn').addEventListener('click',revealTruth);document.querySelectorAll('[data-prediction]').forEach(b=>b.addEventListener('click',()=>{state.prediction=b.dataset.prediction;document.querySelectorAll('[data-prediction]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));$('prediction-status').textContent='예상해 두었습니다. 실험 후 실제 분포와 비교해 보세요.';$('prediction-status').hidden=false;}));document.querySelectorAll('[data-size]').forEach(b=>b.addEventListener('click',()=>setSize(Number(b.dataset.size))));$('population-kind').addEventListener('change',e=>resetLab(e.target.value));$('reset-lab').addEventListener('click',()=>resetLab());document.querySelectorAll('[data-answer]').forEach(b=>b.addEventListener('click',()=>{const answer=b.dataset.answer;const ok=answer==='smaller';$('quiz-feedback').hidden=false;$('quiz-feedback').textContent=ok?'맞습니다. 모집단이 같고 독립적인 표본추출이라면 표본크기가 커질수록 표본평균의 표준오차는 대체로 작아집니다. 그래도 한 번의 표본이 정확하다고 보장되지는 않습니다.':'다시 생각해 보세요. 표본크기를 늘리면 한 번의 평균이 여러 관측값에 기반하므로, 반복해서 구한 표본평균의 흔들림은 대체로 작아집니다. (다만 무조건 같은 값이 되지는 않습니다.)';}));document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!intro.hidden)closeIntro(false);});$('lab-main').inert=true;document.querySelector('header').inert=true;document.body.style.overflow='hidden';$('start-btn').focus();}
+start();
+</script>
+
+<script id="rc1-modal-keyboard-guard">
+/* RC1 accessibility: custom modal isolates focus; does not change simulation models. */
+(() => {
+  'use strict';
+  const root = document.getElementById("intro-overlay");
+  if (!root) return;
+  const dialog = root.querySelector('[role="dialog"]') || root;
+  const background = [...document.querySelectorAll('body > header, body > main, body > footer, .page')];
+  let previouslyOpen = false;
+  const isOpen = () => !root.hidden && !!root.getClientRects().length && getComputedStyle(root).visibility !== 'hidden';
+  function choices(){
+    return [...dialog.querySelectorAll('button, a[href], input, select, textarea, [tabindex]')].filter(el =>
+      !el.disabled && !el.hidden && el.tabIndex >= 0 && el.getClientRects().length && getComputedStyle(el).visibility !== 'hidden');
+  }
+  function update(){
+    const open = isOpen();
+    background.forEach(el => {el.inert = open});
+    if(open && !dialog.contains(document.activeElement)) choices()[0]?.focus({preventScroll:true});
+    if(!open && previouslyOpen && (dialog.contains(document.activeElement) || document.activeElement === document.body)) {
+      const intended = document.querySelector("#run-one");
+      if (intended && !intended.disabled && intended.getClientRects().length) intended.focus({preventScroll:true});
+      else {const main = document.querySelector('main'); if (main) {main.tabIndex=-1; main.focus({preventScroll:true})}}
+    }
+    previouslyOpen = open;
+  }
+  root.addEventListener('keydown',event => {
+    if(event.key !== 'Tab' || !isOpen()) return;
+    const els=choices(); if(!els.length) return;
+    const index=els.indexOf(document.activeElement);
+    const next=event.shiftKey ? (index <= 0 ? els[els.length-1] : els[index-1])
+      : (index < 0 || index === els.length-1 ? els[0] : els[index+1]);
+    event.preventDefault(); next.focus({preventScroll:true});
+  });
+  new MutationObserver(update).observe(root,{attributes:true,attributeFilter:['hidden','class','style']});
+  update();
+})();
+</script>
+</body>
+</html>

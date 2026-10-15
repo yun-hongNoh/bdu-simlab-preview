@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head><meta name="robots" content="noindex,nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="분류 기준을 바꾸며 정확도·정밀도·재현율과 상담 가능 인원을 비교하는 교육용 시뮬레이션">
+<title>13-2 AI 분류 게이트 | 컴퓨터공학과 웹 시뮬레이션 학습도구</title>
+<style>
+:root{color-scheme:dark;--bg:#081421;--panel:#10293a;--panel2:#15364a;--line:#36576b;--text:#f4f9ff;--muted:#cee2ee;--mint:#8ee8df;--yellow:#ffd48c;--orange:#ffbc9a;--blue:#9cbefa;--shadow:0 20px 65px #0006}
+*{box-sizing:border-box} [hidden]{display:none!important}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 70% -13%,#245769 0,transparent 44%),radial-gradient(circle at -15% 39%,#33315a 0,transparent 38%),var(--bg);color:var(--text);font:16px/1.58 system-ui,-apple-system,"Malgun Gothic","Apple SD Gothic Neo",sans-serif;word-break:keep-all;overflow-wrap:break-word;min-width:300px}
+button,input,textarea{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.6}a{color:inherit;text-decoration:none}a:hover{text-decoration:underline;text-underline-offset:4px}:focus-visible{outline:3px solid #ffdd84;outline-offset:3px}button{min-height:46px} .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+.topbar{border-bottom:1px solid #3d5869}.nav,.wrap,.foot{max-width:1190px;margin:0 auto;padding-left:26px;padding-right:26px}.nav{min-height:72px;display:flex;align-items:center;justify-content:space-between;gap:12px}.brand{display:inline-flex;gap:10px;align-items:center;font-weight:800;font-size:.91rem}.brand-icon{width:33px;height:33px;border-radius:11px;background:#72d6cf;color:#082937;display:grid;place-items:center;font-size:1.25rem}.nav-tag{font-size:.8rem;color:#d9edf5;border:1px solid #4c7583;border-radius:99px;padding:5px 12px;white-space:nowrap}
+.wrap{padding-top:34px;padding-bottom:56px}.eyebrow{color:var(--mint);font-size:.84rem;font-weight:800;letter-spacing:.035em;margin:0 0 7px}.hero{display:flex;justify-content:space-between;align-items:flex-start;gap:23px;margin-bottom:23px}.hero h1{font-size:clamp(2rem,3vw,2.9rem);line-height:1.22;margin:0 0 10px;letter-spacing:-.036em}.hero p.desc{margin:0;color:#d6e8f0;max-width:680px}.progress{border:1px solid #416171;border-radius:15px;padding:12px 14px;background:#153247;min-width:208px;max-width:290px}.progress small{display:block;color:#bed2de;margin-top:3px;font-size:.77rem}.progress strong{font-size:.88rem}.track{background:#254357;border-radius:20px;height:6px;margin-top:9px;overflow:hidden}.track span{display:block;width:26%;height:100%;background:linear-gradient(90deg,#79dcce,#d0e6f8);transition:width .2s}
+.layout{display:grid;grid-template-columns:minmax(0,1.22fr) minmax(300px,.78fr);gap:17px;align-items:start}.panel{background:linear-gradient(154deg,#133246,#0e2233);border:1px solid var(--line);border-radius:20px;box-shadow:0 13px 35px #0002;min-width:0}.panel-head{padding:21px 22px 0}.panel h2{font-size:1.18rem;margin:0;letter-spacing:-.01em}.panel-desc{color:#c7dfec;font-size:.9rem;margin:4px 0 0}.stage{margin:15px 14px 0;padding:17px 16px 18px;border:1px solid #3b7184;border-radius:17px;background:radial-gradient(circle at 51% 14%,#165166 0,transparent 55%),linear-gradient(145deg,#09243a,#0a1d2e);position:relative;overflow:hidden;min-height:338px}.machine-flow{display:grid;grid-template-columns: minmax(92px,1fr) minmax(105px,1fr) minmax(0,1.92fr);gap:10px;align-items:center;min-height:300px}.machine-block{align-self:stretch;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:12px;min-width:0}.pile{width:104px;height:92px;border:1px solid #5a9bba;border-radius:15px;background:#163c4f;display:flex;flex-wrap:wrap;gap:5px;padding:18px 15px;align-content:center;justify-content:center;box-shadow:inset 0 0 0 4px #132f42}.pile span{width:10px;height:10px;border-radius:4px;background:#8ccbdc;box-shadow:0 0 8px #85d3d953}.pile span:nth-child(3n){background:#ffdc9a}.block-name{font-size:.9rem;font-weight:800;text-align:center}.block-note{color:#c6dbe7;font-size:.78rem;text-align:center;line-height:1.36;max-width:140px}.gate-device{width:97px;height:136px;display:flex;align-items:center;flex-direction:column;justify-content:space-between;border:3px solid #8adeca;border-radius:22px;background:linear-gradient(165deg,#164453,#09212d);box-shadow:0 0 30px #4cfbc116,inset 0 0 0 5px #123b47;padding:14px 7px}.gate-arrow{font-size:1.7rem;color:var(--mint);line-height:1}.gate-value{font-size:1.9rem;font-weight:900;font-variant-numeric:tabular-nums;letter-spacing:-.035em}.gate-device span{font-size:.76rem;color:#d6ecf4}.bins{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;align-self:stretch;align-content:center}.bin{border:1px solid #5d8190;background:#173447;border-radius:13px;padding:10px 7px;min-height:101px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:3px;position:relative}.bin strong{font-size:1.78rem;line-height:1.1;font-variant-numeric:tabular-nums}.bin span{font-size:.8rem;font-weight:800;text-align:center;line-height:1.28}.bin small{font-size:.7rem;color:#cbdfe9}.bin.tp{border-color:#3b9c8a}.bin.tp strong{color:var(--mint)}.bin.fp{border-color:#a48155}.bin.fp strong{color:var(--yellow)}.bin.fn{border-color:#aa6a57}.bin.fn strong{color:var(--orange)}.bin.tn{border-color:#6c87ba}.bin.tn strong{color:var(--blue)}.fly-token{position:absolute;width:11px;height:11px;border-radius:5px;left:0;top:0;z-index:4;pointer-events:none;box-shadow:0 0 8px currentColor;opacity:0}.fly-token.tp{background:var(--mint);color:var(--mint)}.fly-token.fp{background:var(--yellow);color:var(--yellow)}.fly-token.fn{background:var(--orange);color:var(--orange)}.fly-token.tn{background:var(--blue);color:var(--blue)}.stage-bottom{display:flex;justify-content:space-between;align-items:center;color:#cde2ec;font-size:.83rem;margin:9px 3px 0;gap:8px}.counter{font-variant-numeric:tabular-nums;font-weight:850;color:#f4fafb}.run-progress{height:5px;background:#274758;border-radius:20px;margin:10px 4px 0;overflow:hidden}.run-progress span{height:100%;display:block;background:var(--mint);width:0%;transition:width .1s linear}.stage-label{font-size:.81rem;text-align:center;color:#c4e3e4;padding:8px 16px 0;margin:0}
+.primary-actions{padding:16px 20px 21px}.button-row{display:flex;gap:9px;flex-wrap:wrap}.btn{min-height:49px;border:1px solid #50778b;background:#21465a;color:#f4faff;border-radius:12px;padding:10px 15px;font-weight:800;line-height:1.3}.btn:hover:not(:disabled){filter:brightness(1.1)}.btn-primary{background:linear-gradient(125deg,#71e0d0,#95e1ef);color:#07313d;border:0;box-shadow:0 7px 24px #65eadc22}.btn-primary:disabled{color:#1c4350}.btn-wide{flex:1 1 190px}.helper{font-size:.88rem;margin:10px 0 0;color:#cee3ec}.exp-control{padding:15px 17px;border:1px solid #426d82;background:#15384c;border-radius:15px;margin-top:15px}.exp-control h3{font-size:1rem;margin:0 0 5px}.exp-control p{font-size:.86rem;margin:0 0 12px;color:#d5e5ee}.segments{display:flex;gap:7px;flex-wrap:wrap}.segment{background:#224a5f;color:#e8f4f9;border:1px solid #587b8b;border-radius:11px;min-height:43px;padding:8px 16px;font-weight:800}.segment[aria-pressed=true]{background:#87e4dc;color:#072b39;border-color:#87e4dc}.control-note{margin-top:9px!important;margin-bottom:0!important}.advanced{margin-top:12px;border-top:1px solid #486879;padding-top:10px}.advanced summary{font-size:.85rem;cursor:pointer;font-weight:760;color:#d4e8f1}.advanced label{font-size:.86rem;display:block;margin:10px 0 8px}.range-row{display:flex;gap:14px;align-items:center}.range-row input{flex:1;accent-color:#74dfd6;min-width:0}.range-row output{font-weight:850;font-variant-numeric:tabular-nums;min-width:48px;text-align:right}.advanced p{font-size:.78rem;color:#c7dce7;margin:4px 0 0}
+.metrics{padding:18px 19px}.metric-head{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:9px}.metric-head h2{font-size:1.12rem}.metric-head span{font-size:.77rem;color:#b7d6e1;white-space:nowrap}.measure{padding:10px 12px;border:1px solid #426172;background:#19394b;border-radius:13px;margin-top:9px;display:flex;justify-content:space-between;gap:13px;align-items:center}.measure .metric-name{font-weight:800;font-size:.9rem}.measure .metric-desc{font-size:.78rem;color:#cfe1ec;margin-top:4px}.measure strong{font-size:1.4rem;font-variant-numeric:tabular-nums;white-space:nowrap}.measure.highlight{border-color:#51998f;background:#173e4c}.capacity{margin-top:13px;padding:12px 13px;background:#172f41;border:1px solid #405e71;border-radius:12px}.capacity .cap-head{display:flex;justify-content:space-between;gap:8px;font-weight:800;font-size:.88rem}.capacity .cap-track{width:100%;height:9px;background:#2c495c;border-radius:40px;overflow:hidden;margin:10px 0 7px}.capacity .cap-fill{width:0%;height:100%;background:#73d9cd;border-radius:40px;transition:width .3s}.capacity.over{border-color:#c18b64}.capacity.over .cap-fill{background:#f7bb7d}.capacity .cap-message{margin:0;color:#d5e6ee;font-size:.84rem}.insight{margin-top:13px;background:#1c4254;border-radius:12px;border:1px solid #4d7889;padding:13px 14px;font-size:.91rem}.insight strong{color:#a6eee5}.insight p{margin:6px 0 0}.subdetails{margin-top:13px;font-size:.84rem}.subdetails summary{cursor:pointer;font-weight:750}.subdetails p{margin:7px 0 0;color:#c9e0ea}.foot{border-top:1px solid #315064;padding-top:22px;padding-bottom:30px;color:#bdd3df;font-size:.82rem}
+.lower{margin-top:19px;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:17px;align-items:start}.below-panel{padding:20px 21px}.below-panel h2{font-size:1.16rem;margin:0 0 7px}.below-panel p{color:#d3e5ed;margin:0 0 12px;font-size:.92rem}.history{overflow-x:auto}.history table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap;font-size:.84rem}.history th,.history td{padding:10px 8px;border-bottom:1px solid #365468}.history th:first-child,.history td:first-child{text-align:left}.history th{color:#d1e5ef;font-weight:760}.history .current{background:#204658}.mission-choice{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.mission-choice button{background:#1e4256;border:1px solid #56788c;color:white;border-radius:10px;padding:9px 13px;font-weight:760}.mission-choice button[aria-pressed=true]{background:#80ded4;color:#0b2e3b}.mission-textarea{width:100%;min-height:75px;background:#102b3e;border:1px solid #5c7e90;color:#fff;border-radius:10px;padding:11px 12px;margin-top:9px;resize:vertical}.decision-feedback{padding:12px;background:#204658;border-radius:10px;border:1px solid #517685;font-size:.9rem;margin-top:10px}.capacity-options{display:flex;gap:8px;margin:8px 0 12px}.capacity-options button{border:1px solid #527486;background:#23445b;color:#fff;border-radius:10px;padding:8px 14px;font-weight:760}.capacity-options button[aria-pressed=true]{background:#82e3d8;color:#07303d}.mini-note{font-size:.81rem!important;color:#c7dfea!important}
+.overlay{position:fixed;inset:0;z-index:20;display:grid;place-items:center;padding:15px;background:#020b15e6;overflow-y:auto}.dialog{width:min(530px,100%);max-height:calc(100dvh - 30px);overflow-y:auto;background:linear-gradient(156deg,#194152,#10293b);border-radius:22px;border:1px solid #648b95;padding:30px;box-shadow:var(--shadow)}.dialog .eyebrow{margin:0 0 8px}.dialog h2{font-size:clamp(1.4rem,3vw,1.87rem);line-height:1.35;letter-spacing:-.03em;margin:0 0 14px}.dialog p{margin:0 0 13px;color:#e0eef4}.story{padding:15px;background:#123246;border:1px solid #4d7582;border-radius:13px;margin:16px 0 17px}.story strong{color:#a7ede6}.dialog .btn{width:100%;min-height:54px}.dialog .small{font-size:.83rem;color:#c5dce7;margin:11px 0 0}.statusline{margin-top:13px;font-size:.85rem;color:#c8e1e8}
+@media(max-width:1020px){.layout{grid-template-columns:1fr}.stage{max-width:770px;margin-left:auto;margin-right:auto}.lower{grid-template-columns:1fr}}
+@media(max-width:650px){.nav,.wrap,.foot{padding-left:16px;padding-right:16px}.nav{min-height:60px}.brand{font-size:.8rem;gap:6px}.brand-icon{width:28px;height:28px}.nav-tag{font-size:.69rem;padding:4px 7px}.wrap{padding-top:25px}.hero{display:block}.hero h1{font-size:2rem}.progress{margin-top:18px;max-width:none}.panel{border-radius:16px}.panel-head{padding:18px 16px 0}.stage{margin:12px 8px 0;padding:11px 8px 14px;min-height:0}.machine-flow{grid-template-columns:1fr;min-height:0;gap:11px}.machine-block{align-self:auto;gap:4px}.machine-block.in{flex-direction:row;gap:13px}.machine-block.gating{flex-direction:row;gap:12px;justify-content:center}.pile{width:86px;height:50px;padding:8px;gap:3px}.pile span{width:7px;height:7px}.gate-device{height:59px;width:146px;border-radius:15px;flex-direction:row;padding:5px 13px;justify-content:space-around}.gate-arrow{font-size:1.25rem}.gate-value{font-size:1.45rem}.gate-device span{font-size:.72rem}.block-name{font-size:.82rem}.block-note{font-size:.72rem}.bins{width:100%;gap:7px}.bin{min-height:76px;padding:7px 5px}.bin strong{font-size:1.45rem}.bin span{font-size:.77rem}.bin small{font-size:.69rem}.stage-bottom{font-size:.78rem}.primary-actions{padding:13px 14px 16px}.exp-control{padding:12px}.metrics{padding:18px 15px}.below-panel{padding:18px 15px}.measure strong{font-size:1.27rem}.dialog{padding:23px 19px}.dialog h2{font-size:1.46rem}}
+@media(max-width:365px){.nav-tag{display:none}.gate-device{width:127px}.bin span{font-size:.72rem}.measure{gap:7px;padding:9px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.track span,.run-progress span,.capacity .cap-fill{transition:none}}
+
+/* v1.3 D2: individual evidence is linked to the same 100 synthetic records. */
+.scenario-strip{margin:12px 17px 0;padding:11px 13px;border:1px solid #5a8d8c;background:#173b48;border-radius:12px;color:#e0f8f6;font-size:.9rem}
+.scenario-strip strong{color:#aef1e5}
+.trace-card{margin:5px 19px 20px;padding:18px;border:1px solid #5b8d9a;background:linear-gradient(135deg,#153d4d,#112b3e);border-radius:17px}
+.trace-card h3{font-size:1.05rem;margin:0 0 6px}
+.trace-card p{font-size:.91rem;color:#d2e6ef;margin:0 0 12px}
+.trace-options{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.trace-options button{border:1px solid #6b93a6;border-radius:10px;min-height:42px;padding:8px 10px;background:#21485e;color:#eff8ff;font-size:.86rem;font-weight:760}
+.trace-options button[aria-pressed=true]{background:#a7ede5;color:#10303f;border-color:#a7ede5}
+.trace-options button:disabled{opacity:.48;cursor:not-allowed}
+.trace-flow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:12px}
+.trace-step{padding:11px 10px;border:1px solid #416b7d;border-radius:11px;background:#102a3c;min-width:0}
+.trace-step .trace-label{display:block;font-size:.74rem;color:#b6d6e2}
+.trace-step strong{display:block;font-size:1.02rem;margin-top:6px;overflow-wrap:anywhere}
+.trace-category{margin:13px 0 11px!important;font-weight:750;color:#b6f1dc!important}
+.trace-card .btn{min-height:44px}
+.bin.trace-active{outline:3px solid #ffdf8a;outline-offset:1px;box-shadow:0 0 0 6px #ffc36d22}
+.trace-token{position:absolute;z-index:8;width:18px;height:18px;border-radius:50%;background:#ffe19b;box-shadow:0 0 0 4px #fff2b447,0 0 23px #ffe7a5;top:0;left:0;pointer-events:none}
+@media(max-width:650px){.scenario-strip{margin:9px 12px 0}.trace-card{margin:3px 12px 16px;padding:14px}.trace-flow{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.trace-step strong{font-size:.93rem}.trace-options button{font-size:.82rem}}
+/* RC1: increase readability of result labels on mobile and desktop */
+.nav-tag,.bin small{font-size:13px}
+
+/* D5: course navigation and mobile legibility, no model changes. */
+.course-return{margin:0 0 14px;font-size:14px;font-weight:750;line-height:1.55}
+.course-return a{color:#bfeae6;display:inline-flex;align-items:center;min-height:38px;padding:5px 0;text-decoration:underline;text-underline-offset:4px}
+@media(max-width:660px){.bin span{font-size:.85rem}.bin small{font-size:.8rem}.progress small{font-size:.83rem}}
+</style>
+</head>
+<body>
+<header class="topbar"><div class="nav"><a class="brand" href="../../index.html"><span class="brand-icon" aria-hidden="true">◈</span>컴퓨터공학과 시뮬레이션 실험실</a><span class="nav-tag">13주 2강 · 분류모형 평가</span></div></header>
+<main class="wrap">
+<nav class="course-return" aria-label="교과목 도구 목록으로 돌아가기"><a href="../../courses/bigdata-planning-analysis/index.html">← 빅데이터 기획 및 분석 · 도구 목록</a></nav>
+<section class="hero"><div><p class="eyebrow">AI 분류 · 임계값 실험</p><h1>AI 분류 게이트</h1><p class="desc">분류 기준을 바꾸면 놓치는 학생과 상담 대상은 어떻게 달라질까요?</p></div><div class="progress" aria-label="학습 진행 상황"><strong id="progress-title">실험 1 / 3 · 높은 기준으로 시작</strong><div class="track"><span id="progress-fill"></span></div><small id="progress-caption">먼저 가상 기록 100건을 분류해 보세요.</small></div></section>
+<div class="layout">
+<section class="panel" aria-labelledby="machine-title"><div class="panel-head"><h2 id="machine-title">움직이는 분류 게이트</h2><p class="panel-desc">가상 학생 100명의 위험 점수를 기준으로 나눕니다.</p></div>
+<p class="scenario-strip" id="scenario-strip"><strong>이번 판단 조건:</strong> 가상 학생 100명 중 실제 중단 8명 · 상담 검토 가능 인원 <strong id="scenario-capacity">10명</strong>. 모든 점수는 학습용으로 만든 값입니다.</p>
+<div class="stage" id="machine-stage"><div class="machine-flow">
+<div id="source" class="machine-block in"><div class="pile" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div><div><div class="block-name">가상 기록 100건</div><div class="block-note">실제 중단 8명 · 유지 92명</div></div></div>
+<div class="machine-block gating"><div class="gate-device" id="gate-device" aria-label="위험 점수 분류 기준"><span>위험 점수 ≥</span><strong class="gate-value" id="gate-value">0.80</strong><span class="gate-arrow" aria-hidden="true">⇢</span></div><div><div class="block-name">분류 게이트</div><div class="block-note">기준 이상이면 상담 검토 대상으로 표시</div></div></div>
+<div class="bins" id="bins">
+<div class="bin tp" data-bin="tp"><span>중단 학생 발견</span><strong id="count-tp">0</strong><small>TP · 맞게 경보</small></div>
+<div class="bin fp" data-bin="fp"><span>유지 학생에 경보</span><strong id="count-fp">0</strong><small>FP · 불필요한 경보</small></div>
+<div class="bin fn" data-bin="fn"><span>중단 학생 놓침</span><strong id="count-fn">0</strong><small>FN · 빠진 경보</small></div>
+<div class="bin tn" data-bin="tn"><span>유지 학생 통과</span><strong id="count-tn">0</strong><small>TN · 맞게 통과</small></div>
+</div></div><div class="stage-bottom"><span id="moving-caption">가상 기록을 넣어보세요.</span><span class="counter" id="run-counter">0 / 100건</span></div><div class="run-progress"><span id="run-bar"></span></div></div>
+<p class="stage-label">네 결과는 예측 당시 기록과 이후 실제 결과를 대조해 확인한 것입니다.</p>
+<div class="primary-actions"><div class="button-row"><button class="btn btn-primary btn-wide" type="button" id="run-btn">① 0.80 기준으로 분류하기</button><button class="btn" id="pause-btn" type="button" hidden>일시정지</button><button class="btn" id="skip-btn" type="button" hidden>결과 바로 보기</button></div><p class="helper" id="run-helper" aria-live="polite">먼저 높은 분류 기준에서 어떤 학생을 놓치는지 살펴봅니다.</p>
+<div id="threshold-controls" class="exp-control" hidden><h3>분류 기준을 바꿔보세요</h3><p>기준을 낮추면 상담 검토 대상이 더 늘어날 수 있어요.</p><div class="segments" role="group" aria-label="분류 기준 선택"><button class="segment" type="button" data-threshold="0.8" aria-pressed="true">0.80</button><button class="segment" type="button" data-threshold="0.6" aria-pressed="false">0.60</button><button class="segment" type="button" data-threshold="0.4" aria-pressed="false">0.40</button></div><p class="control-note" id="threshold-hint">다른 기준을 선택하고 분류를 다시 실행하세요.</p>
+<details class="advanced" id="advanced"><summary>더 자세히 조절하기</summary><label for="threshold-range">분류 기준 (0.30~0.90)</label><div class="range-row"><input type="range" id="threshold-range" min="0.30" max="0.90" step="0.05" value="0.80"><output for="threshold-range" id="range-value">0.80</output></div><p>점수가 기준 이상이면 상담 검토 대상으로 표시합니다. 실제 위험 여부는 사후에 확인합니다.</p></details></div>
+<section class="trace-card" id="trace-card" aria-labelledby="trace-title" hidden>
+  <h3 id="trace-title">🔍 기록 하나의 분류 경로를 따라가 보세요</h3>
+  <p>아래 버튼을 누르면 해당 결과에 속하는 <strong>실제 합성 기록 1건</strong>을 고릅니다. 같은 기록이 기준 변경 후에도 어떻게 분류되는지 비교할 수 있습니다.</p>
+  <div class="trace-options" role="group" aria-label="살펴볼 분류 결과 선택">
+    <button type="button" data-trace="tp" aria-pressed="false">TP · 발견</button>
+    <button type="button" data-trace="fp" aria-pressed="false">FP · 불필요한 경보</button>
+    <button type="button" data-trace="fn" aria-pressed="false">FN · 놓침</button>
+    <button type="button" data-trace="tn" aria-pressed="false">TN · 통과</button>
+  </div>
+  <div class="trace-flow" id="trace-flow" aria-live="polite" aria-label="개별 기록의 분류 근거">
+    <div class="trace-step"><span class="trace-label">합성 기록 ID</span><strong id="trace-id">—</strong></div>
+    <div class="trace-step"><span class="trace-label">점수 / 기준</span><strong id="trace-score">—</strong></div>
+    <div class="trace-step"><span class="trace-label">당시 예측</span><strong id="trace-predicted">—</strong></div>
+    <div class="trace-step"><span class="trace-label">사후 실제 결과</span><strong id="trace-actual">—</strong></div>
+  </div>
+  <p class="trace-category" id="trace-explain">선택된 기록의 이동 이유가 여기에 표시됩니다.</p>
+  <button type="button" class="btn" id="trace-play">▶ 이 기록만 게이트에 다시 흘려보기</button>
+</section>
+</section>
+<aside class="panel metrics" aria-label="분류 결과"><div class="metric-head"><h2>지금 분류한 결과</h2><span id="metric-threshold">아직 실행 전</span></div>
+<div class="measure"><div><div class="metric-name">정확도</div><div class="metric-desc">전체에서 맞게 분류한 비율</div></div><strong id="metric-accuracy">—</strong></div>
+<div class="measure"><div><div class="metric-name">정밀도</div><div class="metric-desc">경보 중 실제 중단 비율</div></div><strong id="metric-precision">—</strong></div>
+<div class="measure highlight"><div><div class="metric-name">재현율</div><div class="metric-desc">실제 중단 8명 중 발견한 비율</div></div><strong id="metric-recall">—</strong></div>
+<div class="capacity" id="capacity-box"><div class="cap-head"><span>상담 가능 인원</span><span id="cap-count">— / 10명</span></div><div class="cap-track"><div id="cap-fill" class="cap-fill"></div></div><p class="cap-message" id="cap-message">분류 후 상담 대상 인원을 확인하세요.</p></div>
+<div class="insight" id="insight" aria-live="polite"><strong>첫 실험을 시작해 보세요.</strong><p>같은 100명인데도 분류 기준에 따라 결과가 달라집니다.</p></div>
+<details class="subdetails"><summary>지표 계산 방법 보기</summary><p>정확도 = (TP+TN)/100 · 정밀도 = TP/(TP+FP) · 재현율 = TP/(TP+FN). 분모가 0일 때에는 0%로 단정하지 않고 계산 불가로 표시합니다.</p></details></aside>
+</div>
+<div class="lower"><section class="panel below-panel" id="history-panel" hidden><h2>기준별 결과 비교</h2><p>같은 기록 100건을 다른 기준으로 분류한 결과입니다.</p><div class="history"><table><thead><tr><th>기준</th><th>대상</th><th>정확도</th><th>재현율</th></tr></thead><tbody id="history-body"></tbody></table></div><p class="mini-note">상담 인원이 같아도 경보가 정확한지는 따로 확인해야 합니다.</p></section>
+<section class="panel below-panel" id="decision-panel" hidden><h2>이제 직접 결정해 보세요</h2><p>상담 가능한 학생은 10명입니다. <strong>10명 이내에서 실제 중단 학생을 더 많이 발견</strong>하려면 어느 기준이 좋을까요?</p>
+<div class="mission-choice" role="group" aria-label="선택할 기준"><button type="button" data-choice="0.8" aria-pressed="false">0.80</button><button type="button" data-choice="0.6" aria-pressed="false">0.60</button><button type="button" data-choice="0.4" aria-pressed="false">0.40</button></div>
+<label for="reason" class="sr-only">선택한 이유</label><textarea id="reason" class="mission-textarea" placeholder="어떤 지표와 상담 인원 조건을 고려했나요?"></textarea><button type="button" class="btn btn-primary" id="judge-btn" disabled>내 판단 확인하기</button><div id="decision-feedback" class="decision-feedback" role="status" hidden></div>
+<div id="transfer" hidden><p style="margin-top:16px"><strong>조건이 달라졌습니다.</strong> 상담 가능 인원이 20명으로 늘어나면 같은 기준을 유지할까요?</p><div class="capacity-options" role="group" aria-label="상담 가능 인원"><button type="button" data-capacity="10" aria-pressed="true">10명</button><button type="button" data-capacity="20" aria-pressed="false">20명</button></div><p class="mini-note" id="transfer-note">상담 가능 인원만 바뀌며, 위험점수와 실제 중단 여부는 그대로입니다.</p></div></section></div>
+</main>
+<footer class="foot">교육용 합성 데이터 · 실제 학생의 중단 위험을 판정하거나 상담 대상을 자동 배정하는 시스템이 아닙니다 · 정규 성적 미연동</footer>
+<div class="overlay" id="onboarding" role="dialog" aria-modal="true" aria-labelledby="intro-title"><div class="dialog"><p class="eyebrow">13주 2강 · 분류모형 평가</p><h2 id="intro-title">정확도가 높으면 좋은 분류일까요?</h2><p>지난 학기 가상 학생 100명에게 AI가 위험 점수를 매겼습니다. 학기가 끝난 뒤 실제로 중단한 학생은 8명이었습니다.</p><div class="story"><strong>오늘의 미션</strong><p style="margin:6px 0 0">분류 기준을 바꾸면서 <b>놓친 학생</b>과 <b>상담 검토 대상 인원</b>이 어떻게 달라지는지 확인하세요.</p><p style="margin:8px 0 0">한 번에 상담할 수 있는 학생은 <b>10명</b>입니다.</p></div><button type="button" id="start-btn" class="btn btn-primary">분류 게이트 가동하기</button><p class="small">실제 학생 정보가 아닌 가상 기록으로 연습합니다. 예측 당시에는 누가 실제로 중단할지 알 수 없습니다.</p></div></div>
+<script id="classification-script">
+'use strict';
+/* CLASSIFICATION_CORE_START — logic is pure and suitable for standalone unit tests. */
+function makeRecords(){
+  const p=[.92,.84,.76,.65,.58,.47,.35,.18];
+  const n=[.86,.72,.69,.62,.59,.55,.54,.52,.50,.46,.41];
+  let seed=21712026; const rand=()=>{seed=(Math.imul(1664525,seed)+1013904223)>>>0;return seed/4294967296};
+  for(let i=0;i<81;i++)n.push(Math.round((.025+.36*rand())*10000)/10000);
+  const rows=[...p.map((score,i)=>({id:'S'+String(i+1).padStart(3,'0'),score,actual:1})),...n.map((score,i)=>({id:'S'+String(i+9).padStart(3,'0'),score,actual:0}))];
+  // Deterministically shuffle so group membership does not visibly follow row order.
+  for(let i=rows.length-1;i>0;i--){let j=Math.floor(rand()*(i+1));[rows[i],rows[j]]=[rows[j],rows[i]]}
+  return rows;
+}
+const RECORDS=makeRecords();
+function classify(record,threshold){let predicted=record.score>=threshold;return predicted?(record.actual?'tp':'fp'):(record.actual?'fn':'tn')}
+function evaluate(threshold, records=RECORDS){let c={tp:0,fp:0,fn:0,tn:0};for(const row of records)c[classify(row,threshold)]++;let total=records.length,positive=c.tp+c.fp,real=c.tp+c.fn;return {...c,total,flagged:positive,accuracy:total?(c.tp+c.tn)/total:null,precision:positive?c.tp/positive:null,recall:real?c.tp/real:null,threshold}}
+function fmtPct(x){return x===null?'계산 불가':(x*100).toFixed(1)+'%'}
+/* CLASSIFICATION_CORE_END */
+const $=id=>document.getElementById(id), all=(q)=>Array.from(document.querySelectorAll(q));
+const state={selected:0.8,last:null,phase:'ready',busy:false,paused:false,runGeneration:0,animations:[],seen:new Map(),revealed:{tp:0,fp:0,fn:0,tn:0},processed:0,decision:null,capacity:10,playedCount:0,traceRecordId:'S003' };
+window.classifierState=state; window.classificationTestAPI={makeRecords,RECORDS,classify,evaluate,fmtPct};
+const reduced=matchMedia('(prefers-reduced-motion: reduce)');
+function phaseLabel(){let n=state.playedCount;if(n===0){$('progress-title').textContent='실험 1 / 3 · 높은 기준으로 시작';$('progress-caption').textContent='먼저 0.80 기준으로 분류해 보세요.';$('progress-fill').style.width='27%'}else if(state.seen.size<2){$('progress-title').textContent='실험 2 / 3 · 기준 변경';$('progress-caption').textContent='기준을 낮추고 결과를 비교하세요.';$('progress-fill').style.width='55%'}else{$('progress-title').textContent='실험 3 / 3 · 결과 판단';$('progress-caption').textContent='상담 인원을 고려해 판단해 보세요.';$('progress-fill').style.width='100%'}}
+function showBusy(b){state.busy=b;$('run-btn').disabled=b;all('[data-threshold]').forEach(btn=>btn.disabled=b);$('threshold-range').disabled=b;$('pause-btn').hidden=!b;$('skip-btn').hidden=!b}
+function updateThresholdUI(){let t=state.selected;$('gate-value').textContent=t.toFixed(2);$('range-value').textContent=t.toFixed(2);$('threshold-range').value=t.toFixed(2);all('[data-threshold]').forEach(el=>el.setAttribute('aria-pressed',String(Number(el.dataset.threshold)===t)));$('run-btn').textContent=state.playedCount?'새 기준으로 분류하기':'① 0.80 기준으로 분류하기';$('threshold-hint').textContent=state.last&&state.last.threshold===t?'이 기준의 결과를 확인했습니다. 다른 기준도 비교해 보세요.':'새 기준을 선택했습니다. 분류를 실행하면 경로와 숫자가 달라집니다.'}
+function setThreshold(t){if(state.busy)return;state.selected=Math.round(Number(t)*100)/100;updateThresholdUI();}
+function resetCounters(){state.processed=0;state.revealed={tp:0,fp:0,fn:0,tn:0};['tp','fp','fn','tn'].forEach(x=>$('count-'+x).textContent='0');$('run-counter').textContent='0 / 100건';$('run-bar').style.width='0%';$('moving-caption').textContent='점수 기준에 따라 각 기록이 움직입니다.'}
+function increase(key){state.revealed[key]++;state.processed++;$('count-'+key).textContent=state.revealed[key];$('run-counter').textContent=state.processed+' / 100건';$('run-bar').style.width=(state.processed/RECORDS.length*100)+'%';}
+function setRunButtons(){if(state.busy){$('pause-btn').textContent=state.paused?'계속 움직이기':'일시정지'}else{$('pause-btn').hidden=true;$('skip-btn').hidden=true}}
+function cancelMotion(){state.runGeneration++;for(const a of state.animations){try{a.cancel()}catch(e){}}state.animations=[];all('.fly-token').forEach(x=>x.remove());state.paused=false;}
+function flightPoints(target){const stage=$('machine-stage').getBoundingClientRect();const center=el=>{let r=el.getBoundingClientRect();return{x:r.left+r.width/2-stage.left-5.5,y:r.top+r.height/2-stage.top-5.5}};return [center(document.querySelector('.pile')),center($('gate-device')),center(target)];}
+function visualToken(rec,i,gen){const category=classify(rec,state.selected);const target=document.querySelector(`[data-bin="${category}"]`);const [p0,p1,p2]=flightPoints(target);const token=document.createElement('div');token.className='fly-token '+category;token.setAttribute('aria-hidden','true');$('machine-stage').appendChild(token);
+ const frames=[{transform:`translate(${p0.x}px,${p0.y}px) scale(.6)`,opacity:0},{offset:.13,transform:`translate(${p0.x}px,${p0.y}px) scale(1)`,opacity:1},{offset:.46,transform:`translate(${p1.x}px,${p1.y}px) scale(1)`,opacity:1},{offset:1,transform:`translate(${p2.x}px,${p2.y}px) scale(.7)`,opacity:0.22}];
+ const anim=token.animate(frames,{duration:630,delay:i*36,easing:'ease-in-out',fill:'forwards'});state.animations.push(anim);
+ anim.onfinish=()=>{token.remove();if(gen!==state.runGeneration)return;increase(category);if(state.processed===RECORDS.length)finishRun()};
+}
+function completeImmediate(){cancelMotion();let c=evaluate(state.selected);state.revealed={tp:c.tp,fp:c.fp,fn:c.fn,tn:c.tn};state.processed=RECORDS.length;['tp','fp','fn','tn'].forEach(k=>$('count-'+k).textContent=c[k]);$('run-counter').textContent='100 / 100건';$('run-bar').style.width='100%';finishRun();}
+function startRun(){if(state.busy)return;cancelMotion();$('trace-card').hidden=true;all('.bin').forEach(bin=>bin.classList.remove('trace-active'));resetCounters();state.phase='running';state.paused=false;showBusy(true);$('run-helper').textContent='가상 기록을 하나씩 분류하고 있습니다.';$('moving-caption').textContent='기준 '+state.selected.toFixed(2)+'로 이동 중…';$('onboarding').hidden=true;const gen=state.runGeneration;
+ if(reduced.matches){completeImmediate();return}for(let i=0;i<RECORDS.length;i++)visualToken(RECORDS[i],i,gen);setRunButtons();}
+function finishRun(){const r=evaluate(state.selected);state.last=r;state.seen.set(r.threshold,r);state.playedCount++;state.animations=[];state.phase='result';showBusy(false);state.paused=false;setRunButtons();$('moving-caption').textContent='100건 분류 완료 · 기준 '+state.selected.toFixed(2);$('run-helper').textContent='분류가 끝났습니다. 다음에는 기준을 바꿔 비교해 보세요.';$('threshold-controls').hidden=false;updateThresholdUI();renderMetrics();renderHistory();renderRecordTrace();phaseLabel();}
+function pauseRun(){if(!state.busy)return;state.paused=!state.paused;for(const a of state.animations){try{state.paused?a.pause():a.play()}catch(e){}}setRunButtons();$('moving-caption').textContent=state.paused?'움직임을 잠시 멈췄습니다.':'다시 분류 중…'}
+function renderMetrics(){const r=state.last;if(!r)return;$('metric-threshold').textContent='기준 '+r.threshold.toFixed(2);$('metric-accuracy').textContent=fmtPct(r.accuracy);$('metric-precision').textContent=fmtPct(r.precision);$('metric-recall').textContent=fmtPct(r.recall);$('cap-count').textContent=r.flagged+' / '+state.capacity+'명';$('cap-fill').style.width=Math.min(r.flagged/state.capacity,1)*100+'%';$('capacity-box').classList.toggle('over',r.flagged>state.capacity);$('cap-message').textContent=r.flagged>state.capacity?`상담 가능 인원을 ${r.flagged-state.capacity}명 초과합니다.`:`상담 가능 인원 안에서 검토할 수 있습니다.`;let msg='';if(r.threshold===.8)msg='정확도는 높지만, 실제 중단 8명 중 6명을 놓칩니다.';else if(r.threshold===.6)msg='실제 중단 8명 중 4명을 발견했고, 상담 검토 대상은 8명입니다.';else if(r.threshold===.4)msg='실제 중단 8명 중 6명을 발견하지만 상담 대상은 17명입니다.';else msg=`실제 중단 8명 중 ${r.tp}명을 발견하고 ${r.fn}명을 놓칩니다.`;
+ $('insight').innerHTML='<strong>이번 실험에서 확인한 점</strong><p>'+msg+'</p>'}
+function renderHistory(){if(!state.seen.size)return;const rows=Array.from(state.seen.values()).sort((a,b)=>b.threshold-a.threshold);$('history-panel').hidden=rows.length<2;$('history-body').innerHTML=rows.map(r=>`<tr class="${state.last&&r.threshold===state.last.threshold?'current':''}"><td>${r.threshold.toFixed(2)}</td><td>${r.flagged}명</td><td>${fmtPct(r.accuracy)}</td><td>${fmtPct(r.recall)}</td></tr>`).join('');if(rows.length>=2)$('decision-panel').hidden=false}
+function chooseDecision(v){state.decision=v;all('[data-choice]').forEach(b=>b.setAttribute('aria-pressed',String(Number(b.dataset.choice)===v)));$('judge-btn').disabled=false;}
+function judgeDecision(){if(state.decision===null)return;const v=state.decision,r=evaluate(v);let message=v===.6?'이 조건에서는 0.60이 세 기준 중 가장 많은 실제 중단 학생을 발견하면서 상담 인원 10명을 넘지 않습니다.':'조건을 다시 비교해 보세요. 0.80은 3명만 분류하며 중단 학생을 더 놓치고, 0.40은 17명을 분류해 상담 가능 인원을 넘습니다. 0.60은 8명을 분류합니다.';const text=$('reason').value.trim();if(text.length<5)message+=' 선택 이유에 재현율·상담 인원 중 어느 기준을 고려했는지도 적어보면 좋겠습니다.';
+ $('decision-feedback').textContent=message;$('decision-feedback').hidden=false;$('transfer').hidden=false;}
+function changeCapacity(n){state.capacity=n;$('scenario-capacity').textContent=n+'명';all('[data-capacity]').forEach(b=>b.setAttribute('aria-pressed',String(Number(b.dataset.capacity)===n)));if(state.last)renderMetrics();$('transfer-note').textContent=n===20?'이제 0.40도 17명으로 인원 제한 안에 들어옵니다. 그렇다고 반드시 최선일까요? 불필요한 경보의 비용과 지원 효과를 함께 판단해 보세요.':'상담 가능 인원이 10명일 때의 선택 이유를 다시 생각해 보세요.';}
+function chooseTrace(category){
+ if(!state.last||state.busy)return;
+ const example=RECORDS.find(rec=>classify(rec,state.last.threshold)===category);
+ if(!example)return;
+ state.traceRecordId=example.id;renderRecordTrace();
+}
+function renderRecordTrace(){
+ if(!state.last)return;
+ const t=state.last.threshold;
+ let rec=RECORDS.find(item=>item.id===state.traceRecordId);
+ if(!rec){rec=RECORDS.find(row=>classify(row,t)==='fn')||RECORDS[0];state.traceRecordId=rec.id;}
+ const category=classify(rec,t);
+ const predicted=rec.score>=t;
+ const labels={tp:'TP · 실제 중단을 발견했습니다.',fp:'FP · 실제 유지했지만 불필요한 경보가 발생했습니다.',fn:'FN · 실제 중단했지만 경보에서 빠졌습니다.',tn:'TN · 실제 유지했고 경보에서도 제외됐습니다.'};
+ $('trace-id').textContent=rec.id;
+ $('trace-score').textContent=rec.score.toFixed(2)+' / '+t.toFixed(2);
+ $('trace-predicted').textContent=predicted?'상담 검토 포함':'검토 제외';
+ $('trace-actual').textContent=rec.actual?'중단(사후)':'유지(사후)';
+ $('trace-explain').textContent=labels[category]+` 이 기록의 위험점수 ${rec.score.toFixed(2)}는 기준 ${t.toFixed(2)}${predicted?' 이상':' 미만'}입니다. 이 예는 실제 학생 진단이나 예측 확률이 아닙니다.`;
+ all('[data-trace]').forEach(btn=>{
+   const c=btn.dataset.trace,available=state.last[c]>0;
+   btn.disabled=!available;btn.setAttribute('aria-pressed',String(c===category));
+   btn.title=available?`${c.toUpperCase()}에 해당하는 합성 기록 보기`:'이 기준에서는 해당 기록이 없습니다.';
+ });
+ all('.bin').forEach(bin=>bin.classList.toggle('trace-active',bin.dataset.bin===category));
+ $('trace-card').hidden=false;
+}
+function traceFlight(){
+ if(!state.last||state.busy)return;
+ const rec=RECORDS.find(item=>item.id===state.traceRecordId);
+ if(!rec)return;
+ const category=classify(rec,state.last.threshold),target=document.querySelector(`[data-bin="${category}"]`);
+ if(!target)return;
+ const btn=$('trace-play');if(btn.disabled)return;
+ if(reduced.matches){btn.textContent='✓ 이동 결과가 강조되었습니다';setTimeout(()=>btn.textContent='▶ 이 기록만 게이트에 다시 흘려보기',900);return;}
+ const [a,b,c]=flightPoints(target),token=document.createElement('div');token.className='trace-token';token.setAttribute('aria-hidden','true');$('machine-stage').appendChild(token);btn.disabled=true;
+ const keyframes=[{transform:`translate(${a.x}px,${a.y}px) scale(.7)`,opacity:0},{offset:.16,transform:`translate(${a.x}px,${a.y}px) scale(1)`,opacity:1},{offset:.55,transform:`translate(${b.x}px,${b.y}px) scale(1.25)`,opacity:1},{transform:`translate(${c.x}px,${c.y}px) scale(.8)`,opacity:1}];
+ const anim=token.animate(keyframes,{duration:1200,easing:'ease-in-out',fill:'forwards'});
+ const done=()=>{token.remove();btn.disabled=false;};anim.onfinish=done;anim.oncancel=done;
+}
+all('[data-trace]').forEach(btn=>btn.addEventListener('click',()=>chooseTrace(btn.dataset.trace)));
+$('trace-play').addEventListener('click',traceFlight);
+$('start-btn').addEventListener('click',startRun);$('run-btn').addEventListener('click',startRun);$('pause-btn').addEventListener('click',pauseRun);$('skip-btn').addEventListener('click',()=>{if(state.busy)completeImmediate()});all('[data-threshold]').forEach(b=>b.addEventListener('click',()=>setThreshold(Number(b.dataset.threshold))));$('threshold-range').addEventListener('input',e=>setThreshold(Number(e.target.value)));all('[data-choice]').forEach(b=>b.addEventListener('click',()=>chooseDecision(Number(b.dataset.choice))));$('judge-btn').addEventListener('click',judgeDecision);all('[data-capacity]').forEach(b=>b.addEventListener('click',()=>changeCapacity(Number(b.dataset.capacity))));$('onboarding').addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();$('onboarding').hidden=true;$('run-btn').focus()}});updateThresholdUI();phaseLabel();$('start-btn').focus();
+</script>
+
+<script id="rc1-modal-keyboard-guard">
+/* RC1 accessibility: custom modal isolates focus; does not change simulation models. */
+(() => {
+  'use strict';
+  const root = document.getElementById("onboarding");
+  if (!root) return;
+  const dialog = root.querySelector('[role="dialog"]') || root;
+  const background = [...document.querySelectorAll('body > header, body > main, body > footer, .page')];
+  let previouslyOpen = false;
+  const isOpen = () => !root.hidden && !!root.getClientRects().length && getComputedStyle(root).visibility !== 'hidden';
+  function choices(){
+    return [...dialog.querySelectorAll('button, a[href], input, select, textarea, [tabindex]')].filter(el =>
+      !el.disabled && !el.hidden && el.tabIndex >= 0 && el.getClientRects().length && getComputedStyle(el).visibility !== 'hidden');
+  }
+  function update(){
+    const open = isOpen();
+    background.forEach(el => {el.inert = open});
+    if(open && !dialog.contains(document.activeElement)) choices()[0]?.focus({preventScroll:true});
+    if(!open && previouslyOpen && (dialog.contains(document.activeElement) || document.activeElement === document.body)) {
+      const intended = document.querySelector("#run-btn");
+      if (intended && !intended.disabled && intended.getClientRects().length) intended.focus({preventScroll:true});
+      else {const main = document.querySelector('main'); if (main) {main.tabIndex=-1; main.focus({preventScroll:true})}}
+    }
+    previouslyOpen = open;
+  }
+  root.addEventListener('keydown',event => {
+    if(event.key !== 'Tab' || !isOpen()) return;
+    const els=choices(); if(!els.length) return;
+    const index=els.indexOf(document.activeElement);
+    const next=event.shiftKey ? (index <= 0 ? els[els.length-1] : els[index-1])
+      : (index < 0 || index === els.length-1 ? els[0] : els[index+1]);
+    event.preventDefault(); next.focus({preventScroll:true});
+  });
+  new MutationObserver(update).observe(root,{attributes:true,attributeFilter:['hidden','class','style']});
+  update();
+})();
+</script>
+</body>
+</html>
