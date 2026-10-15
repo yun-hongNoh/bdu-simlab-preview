@@ -1,4 +1,4 @@
-/* BDU Sim Lab v1.2 RC1 catalog. Works from local file:// (no fetch, API or build). */
+/* BDU Sim Lab preview catalog; Graph Detective v1.4 candidate. No fetch, API or build. */
 window.SIMLAB_CATALOG = {
   courses: [
     { id: 'creative', title: '창의적문제해결', overline: '교과목 01', kind: 'existing',
@@ -29,8 +29,8 @@ window.SIMLAB_CATALOG = {
       label: '분류·판단 실험', description: '분류 기준을 바꾸면 실제 위험학생을 더 많이 발견할까요? 상담 인원과 평가 지표를 함께 비교해 보세요.',
       action: '분류 기준 실험하기', path: 'tools/classification-gate/index.html', external: false },
     { id: 'graph-detective', course: 'bigdata', order: 1402, week: '14주 2강', title: '그래프 왜곡 탐정',
-      label: '표현·해석 실험', description: '데이터는 그대로인데 그래프가 다르게 보이는 이유를 찾아보세요. 축과 그래프 종류를 바꿔 직접 비교합니다.',
-      action: '왜곡 찾기 시작하기', path: 'tools/graph-detective/index.html', external: false },
+      label: '6개 사건 · 데이터 해석', description: '잘린 축·그래프 선택·비율·이중축·면적·분포의 여섯 사건에서 숫자와 인상의 차이를 직접 조사해 보세요.',
+      action: '6개 사건 조사하기', path: 'tools/graph-detective/index.html', external: false },
     { id: 'brainstorm', course: 'creative', order: 201, week: '2주 1강', title: 'AI 브레인스토밍 8단계 코치',
       label: '아이디어 발상', description: '아이디어를 단계별로 넓혀 봅니다.', external: true,
       path: 'https://yun-hongnoh.github.io/bdu-learning-tools/week02-01-ai-brainstorming-8step-coach/' },
